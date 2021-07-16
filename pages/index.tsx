@@ -1,7 +1,7 @@
 import Head from "next/head"
 import { Component, ReactElement } from "react"
 
-import styles from "../styles/Home.module.css"
+import Renderer from "../components/Renderer"
 
 export default class Home extends Component
 {
@@ -13,9 +13,7 @@ export default class Home extends Component
                 <Head>
                     <title>Triangle Image</title>
                 </Head>
-                <div>
-
-                </div>
+                <Renderer />
             </div>
         )
     }
