@@ -1,6 +1,9 @@
 import React, { Component, ReactElement } from "react"
 
 import vertex from "./shader/vertex.glsl"
+import fragment from "./shader/fragment.glsl"
+
+import Program from "./Program"
 
 export default class Renderer extends Component
 {
@@ -10,12 +13,14 @@ export default class Renderer extends Component
 
     public componentDidMount(): void
     {
-        console.log(vertex)
         let canvas = this.canvas.current!
         let gl = canvas.getContext("webgl2")!
 
-        let shader = gl.createShader(gl.VERTEX_SHADER)!;
-        gl.shaderSource(shader, vertex)
+        canvas.width = 720
+        canvas.height = 360
+
+        let program = new Program(gl, vertex, fragment)
+        program.draw()
     }
     
     public render(): ReactElement
