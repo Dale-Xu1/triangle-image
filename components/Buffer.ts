@@ -1,7 +1,7 @@
 export default class Buffer
 {
 
-    public constructor(private gl: WebGLRenderingContext, private type: number, private normalize = false)
+    public constructor(private gl: WebGLRenderingContext, private type: number, private normalized = true)
     {
         // Create and bind buffer
         let buffer = gl.createBuffer()
@@ -9,7 +9,7 @@ export default class Buffer
     }
 
 
-    public write(attribute: number, vectors: Vector[], usage = this.gl.DYNAMIC_DRAW): void
+    public write(attribute: number, usage: number, vectors: Vector[]): void
     {
         if (vectors.length === 0) return
         let length = vectors[0].length
@@ -22,10 +22,10 @@ export default class Buffer
 
         // Read data from buffer to attribute
         this.gl.enableVertexAttribArray(attribute)
-        this.gl.vertexAttribPointer(attribute, length, this.type, this.normalize, 0, 0)
+        this.gl.vertexAttribPointer(attribute, length, this.type, this.normalized, 0, 0)
     }
 
-    private cast(data: number[]): ArrayBufferView
+    private cast(data: number[]): BufferSource
     {
         switch (this.type)
         {
