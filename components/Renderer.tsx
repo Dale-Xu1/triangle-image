@@ -19,13 +19,16 @@ export default class Renderer extends Component
     private vertices!: Buffer
     private colors!: Buffer
 
-    private matrix!: WebGLUniformLocation
-
 
     public componentDidMount(): void
     {
         let canvas = this.canvas.current!
         this.gl = canvas.getContext("webgl2")!
+
+        let width = canvas.width = 720
+        let height = canvas.height = 360
+        
+        this.gl.viewport(0, 0, width, height)
 
         // Compile shaders
         let vertex = new Shader(this.gl, this.gl.VERTEX_SHADER, vertexSrc)
@@ -33,20 +36,13 @@ export default class Renderer extends Component
 
         let program = new Program(this.gl, vertex, fragment)
 
-        // Set resolution
-        let resolution = program.uniformLocation("u_resolution")
-
-        let width = canvas.width = 720
-        let height = canvas.height = 360
-
-        this.gl.viewport(0, 0, width, height)
-        this.gl.uniform2f(resolution, width, height)
+        // Initialize projection matrix
+        let matrix = program.uniformLocation("u_matrix")
+        this.gl.uniformMatrix3fv(matrix, true, Matrix3.projection(1, 1).data)
 
         // Bind attributes to buffers
         this.vertices = new Buffer(this.gl, this.gl.FLOAT, 2)
         this.colors = new Buffer(this.gl, this.gl.UNSIGNED_BYTE, 4)
-
-        this.matrix = program.uniformLocation("u_matrix")
 
         program.bindAttribute("position", this.vertices)
         program.bindAttribute("color", this.colors)
@@ -55,27 +51,21 @@ export default class Renderer extends Component
         this.draw()
     }
 
-    private a = 0
     private draw(): void
     {
         window.requestAnimationFrame(this.draw.bind(this))
-        this.a += 0.03
 
         // Clear canvas
         this.gl.clearColor(0, 0, 0, 0)
         this.gl.clear(this.gl.COLOR_BUFFER_BIT)
 
-        // Apply transformations
-        let transformation = Matrix3.rotation(this.a).scale(2, 1).translate(250, 150)
-        this.gl.uniformMatrix3fv(this.matrix, true, transformation.data)
-
         this.vertices.write(this.gl.DYNAMIC_DRAW, [
             new Vector2(0, 0),
-            new Vector2(100, 0),
-            new Vector2(0, 100),
-            new Vector2(0, 100),
-            new Vector2(100, 0),
-            new Vector2(100, 100)
+            new Vector2(1, 0),
+            new Vector2(0, 1),
+            new Vector2(0, 1),
+            new Vector2(1, 0),
+            new Vector2(1, 1)
         ])
         this.colors.write(this.gl.DYNAMIC_DRAW, [
             new Color(255, 0, 0),

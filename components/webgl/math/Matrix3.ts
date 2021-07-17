@@ -7,6 +7,11 @@ export default class Matrix3
         0, 0, 1
     ])
 
+    public static projection(width: number, height: number): Matrix3
+    {
+        return Matrix3.scale(2 / width, -2 / height).translate(-1, 1)
+    }
+
     public static translation(x: number, y: number): Matrix3
     {
         return new Matrix3([

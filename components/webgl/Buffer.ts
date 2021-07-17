@@ -9,7 +9,6 @@ export default class Buffer
     public constructor(private gl: WebGL2RenderingContext,
         public type: number, public length: number, public normalized = true)
     {
-        // Create buffer
         this.buffer = gl.createBuffer()!
     }
 

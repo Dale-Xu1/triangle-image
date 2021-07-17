@@ -45,9 +45,9 @@ export default class Program
         this.gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
     }
 
-    public uniformLocation(uniform: string): WebGLUniformLocation
+    public uniformLocation(name: string): WebGLUniformLocation
     {
-        return this.gl.getUniformLocation(this.program, uniform)!
+        return this.gl.getUniformLocation(this.program, name)!
     }
  
 }
