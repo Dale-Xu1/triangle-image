@@ -1,13 +1,14 @@
 import React, { Component, ReactElement } from "react"
 
-import vertex from "./shader/vertex.glsl"
-import fragment from "./shader/fragment.glsl"
+import vertexSrc from "./shader/vertex.glsl"
+import fragmentSrc from "./shader/fragment.glsl"
 
-import Buffer from "./Buffer"
-import Color from "./math/Color"
-import Matrix3 from "./math/Matrix3"
-import Vector2 from "./math/Vector2"
-import Program, { Shader } from "./Program"
+import Buffer from "./webgl/Buffer"
+import Compute from "./webgl/Compute"
+import Color from "./webgl/math/Color"
+import Matrix3 from "./webgl/math/Matrix3"
+import Vector2 from "./webgl/math/Vector2"
+import Program, { Shader } from "./webgl/Program"
 
 export default class Renderer extends Component
 {
@@ -27,10 +28,10 @@ export default class Renderer extends Component
         this.gl = canvas.getContext("webgl2")!
 
         // Compile shaders
-        let vertexShader = new Shader(this.gl, this.gl.VERTEX_SHADER, vertex)
-        let fragmentShader = new Shader(this.gl, this.gl.FRAGMENT_SHADER, fragment)
+        let vertex = new Shader(this.gl, this.gl.VERTEX_SHADER, vertexSrc)
+        let fragment = new Shader(this.gl, this.gl.FRAGMENT_SHADER, fragmentSrc)
         
-        let program = new Program(this.gl, vertexShader, fragmentShader).program
+        let program = new Program(this.gl, vertex, fragment).program
 
         // Set resolution
         let resolution = this.gl.getUniformLocation(program, "u_resolution")
@@ -47,6 +48,7 @@ export default class Renderer extends Component
 
         this.matrix = this.gl.getUniformLocation(program, "u_matrix")!
 
+        new Compute()
         this.draw()
     }
 
@@ -61,7 +63,7 @@ export default class Renderer extends Component
         this.gl.clear(this.gl.COLOR_BUFFER_BIT)
 
         // Apply transformations
-        let transformation = Matrix3.rotation(this.a).scale(2, 1).translate(200, 100)
+        let transformation = Matrix3.rotation(this.a).scale(2, 1).translate(250, 150)
         this.gl.uniformMatrix3fv(this.matrix, true, transformation.data)
 
         let vertices = new Buffer(this.gl, this.gl.FLOAT)
@@ -77,11 +79,11 @@ export default class Renderer extends Component
         let colors = new Buffer(this.gl, this.gl.UNSIGNED_BYTE)
         colors.write(this.color, this.gl.DYNAMIC_DRAW, [
             new Color(255, 0, 0),
-            new Color(255, 0, 0),
-            new Color(255, 0, 0),
-            new Color(255, 0, 0),
-            new Color(255, 0, 0),
-            new Color(255, 0, 0)
+            new Color(0, 255, 0),
+            new Color(0, 0, 255),
+            new Color(255, 255, 0),
+            new Color(0, 255, 255),
+            new Color(255, 0, 255)
         ])
 
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
