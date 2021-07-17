@@ -1,28 +1,32 @@
+import { Vector } from "./math/Vector2"
+
 export default class Buffer
 {
 
-    public constructor(private gl: WebGLRenderingContext, private type: number, private normalized = true)
+    private buffer: WebGLBuffer
+
+
+    public constructor(private gl: WebGL2RenderingContext,
+        public type: number, public length: number, public normalized = true)
     {
-        // Create and bind buffer
-        let buffer = gl.createBuffer()
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+        // Create buffer
+        this.buffer = gl.createBuffer()!
+    }
+
+    public bind()
+    {
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer)
     }
 
 
-    public write(attribute: number, usage: number, vectors: Vector[]): void
+    public write(usage: number, vectors: Vector[]): void
     {
-        if (vectors.length === 0) return
-        let length = vectors[0].length
-
         let data: number[] = []
         for (let vector of vectors) data.push(...vector.data)
 
         // Write data to buffer
+        this.bind()
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this.cast(data), usage)
-
-        // Read data from buffer to attribute
-        this.gl.enableVertexAttribArray(attribute)
-        this.gl.vertexAttribPointer(attribute, length, this.type, this.normalized, 0, 0)
     }
 
     private cast(data: number[]): BufferSource
@@ -39,17 +43,4 @@ export default class Buffer
         throw new Error(`Invalid type: ${this.type}`)
     }
     
-}
-
-export abstract class Vector
-{
-
-    public length: number
-
-
-    protected constructor(public data: number[])
-    {
-        this.length = data.length
-    }
-
 }

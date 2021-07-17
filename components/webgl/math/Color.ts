@@ -1,4 +1,4 @@
-import { Vector } from "../Buffer"
+import { Vector } from "./Vector2"
 
 export default class Color extends Vector
 {

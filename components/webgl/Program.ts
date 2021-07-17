@@ -1,12 +1,16 @@
+import Buffer from "./Buffer"
+
 export default class Program
 {
 
-    public program: WebGLProgram
-    
+    private program: WebGLProgram
+    private array: WebGLVertexArrayObject
 
-    public constructor(gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
+
+    public constructor(private gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
     {
         this.program = gl.createProgram()!
+        this.array = gl.createVertexArray()!
 
         // Link program
         gl.attachShader(this.program, vertex.shader)
@@ -20,12 +24,30 @@ export default class Program
 
             throw log
         }
+        
+        this.use()
+    }
 
-        // Bind vertex array
-        let array = gl.createVertexArray()
-        gl.bindVertexArray(array)
+    public use(): void
+    {
+        this.gl.useProgram(this.program)
+        this.gl.bindVertexArray(this.array)
+    }
 
-        gl.useProgram(this.program)
+
+    public bindAttribute(name: string, buffer: Buffer): void
+    {
+        let attribute = this.gl.getAttribLocation(this.program, name)
+        buffer.bind()
+        
+        // Instruct how to read data from buffer to attribute
+        this.gl.enableVertexAttribArray(attribute)
+        this.gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
+    }
+
+    public uniformLocation(uniform: string): WebGLUniformLocation
+    {
+        return this.gl.getUniformLocation(this.program, uniform)!
     }
  
 }
