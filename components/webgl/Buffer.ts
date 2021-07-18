@@ -3,6 +3,23 @@ import { Vector } from "./math/Vector2"
 export default class Buffer
 {
 
+    public static cast(gl: WebGL2RenderingContext, type: number, data: number[]): ArrayBufferView
+    {
+        switch (type)
+        {
+            case gl.BYTE: return new Int8Array(data)
+            case gl.SHORT: return new Int16Array(data)
+            case gl.INT: return new Int32Array(data)
+            case gl.UNSIGNED_BYTE: return new Uint8Array(data)
+            case gl.UNSIGNED_SHORT: return new Uint16Array(data)
+            case gl.UNSIGNED_INT: return new Uint32Array(data)
+            case gl.FLOAT: return new Float32Array(data)
+        }
+
+        throw new Error(`Invalid type: ${type}`)
+    }
+
+
     private buffer: WebGLBuffer
 
 
@@ -23,23 +40,11 @@ export default class Buffer
         let data: number[] = []
         for (let vector of vectors) data.push(...vector.data)
 
-        // Write data to buffer
         this.bind()
-        this.gl.bufferData(this.gl.ARRAY_BUFFER, this.cast(data), usage)
-    }
 
-    private cast(data: number[]): BufferSource
-    {
-        switch (this.type)
-        {
-            case this.gl.BYTE: return new Int8Array(data)
-            case this.gl.SHORT: return new Int16Array(data)
-            case this.gl.UNSIGNED_BYTE: return new Uint8Array(data)
-            case this.gl.UNSIGNED_SHORT: return new Uint16Array(data)
-            case this.gl.FLOAT: return new Float32Array(data)
-        }
-
-        throw new Error(`Invalid type: ${this.type}`)
+        // Write data to buffer
+        let buffer = Buffer.cast(this.gl, this.type, data)
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, buffer, usage)
     }
     
 }

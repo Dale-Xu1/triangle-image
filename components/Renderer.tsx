@@ -1,10 +1,10 @@
 import React, { Component, ReactElement } from "react"
 
-import vertexSrc from "./webgl/shader/vertex.glsl"
-import fragmentSrc from "./webgl/shader/fragment.glsl"
+import vertexSrc from "./shader/vertex.glsl"
+import fragmentSrc from "./shader/fragment.glsl"
 
+import Compute from "./Compute"
 import Buffer from "./webgl/Buffer"
-// import Compute from "./webgl/Compute"
 import Color from "./webgl/math/Color"
 import Matrix3 from "./webgl/math/Matrix3"
 import Vector2 from "./webgl/math/Vector2"
@@ -47,7 +47,9 @@ export default class Renderer extends Component
         program.bindAttribute("position", this.vertices)
         program.bindAttribute("color", this.colors)
 
-        // new Compute()
+        let compute = new Compute()
+        compute.run()
+
         this.draw()
     }
 
@@ -59,7 +61,7 @@ export default class Renderer extends Component
         this.gl.clearColor(0, 0, 0, 0)
         this.gl.clear(this.gl.COLOR_BUFFER_BIT)
 
-        this.vertices.write(this.gl.DYNAMIC_DRAW, [
+        this.vertices.write(this.gl.STATIC_DRAW, [
             new Vector2(0, 0),
             new Vector2(1, 0),
             new Vector2(0, 1),
@@ -67,7 +69,7 @@ export default class Renderer extends Component
             new Vector2(1, 0),
             new Vector2(1, 1)
         ])
-        this.colors.write(this.gl.DYNAMIC_DRAW, [
+        this.colors.write(this.gl.STATIC_DRAW, [
             new Color(255, 0, 0),
             new Color(0, 255, 0),
             new Color(0, 0, 255),
