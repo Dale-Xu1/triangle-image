@@ -28,6 +28,7 @@ export default class Program
         this.use()
     }
 
+
     public use(): void
     {
         this.gl.useProgram(this.program)

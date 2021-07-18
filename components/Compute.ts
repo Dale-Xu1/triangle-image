@@ -4,7 +4,6 @@ import fragmentSrc from "./compute/fragment.glsl"
 import Buffer from "./webgl/Buffer"
 import Program, { Shader } from "./webgl/Program"
 import Vector2 from "./webgl/math/Vector2"
-import Texture from "./webgl/Texture"
 
 export default class Compute
 {
@@ -19,45 +18,33 @@ export default class Compute
         new Vector2( 1,  1),
     ]
 
-    private gl: WebGL2RenderingContext
+    private program: Program
 
 
-    public constructor()
+    public constructor(private gl: WebGL2RenderingContext)
     {
-        let canvas = document.createElement("canvas")
-        this.gl = canvas.getContext("webgl2")!
-
         // Compile shaders
-        let vertex = new Shader(this.gl, this.gl.VERTEX_SHADER, vertexSrc)
-        let fragment = new Shader(this.gl, this.gl.FRAGMENT_SHADER, fragmentSrc)
-        
-        let program = new Program(this.gl, vertex, fragment)
+        let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
+        let fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
+
+        this.program = new Program(gl, vertex, fragment)
 
         // Write quad to position attribute
-        let vertices = new Buffer(this.gl, this.gl.FLOAT, 2)
-        program.bindAttribute("position", vertices)
+        let vertices = new Buffer(gl, gl.FLOAT, 2)
+        this.program.bindAttribute("position", vertices)
 
-        vertices.write(this.gl.STATIC_DRAW, Compute.vertices)
+        vertices.write(gl.STATIC_DRAW, Compute.vertices)
+    }
 
-
-        let texture = new Texture(this.gl, this.gl.R8, this.gl.RED, this.gl.UNSIGNED_BYTE)
-        texture.write(3, 2, [1, 2, 3, 4, 5, 6])
-
-        let data = program.uniformLocation("data")
-        this.gl.uniform1i(data, 0)
-
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
-
-        let results = new Uint8Array(24)
-        this.gl.readPixels(0, 0, 3, 2, this.gl.RGBA, this.gl.UNSIGNED_BYTE, results)
-
-        for (let i = 0; i < 6; i++) console.log(results[i * 4])
+    public use(): void
+    {
+        this.program.use()
     }
 
 
-    public run()
+    public draw(): void
     {
-
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
     }
     
 }
