@@ -16,6 +16,9 @@ export default class Renderer extends Component
 
     private canvas = React.createRef<HTMLCanvasElement>()
     private gl!: WebGL2RenderingContext
+
+    private width = 720
+    private height = 360
     
     private program!: Program
 
@@ -29,34 +32,34 @@ export default class Renderer extends Component
     public componentDidMount(): void
     {
         let canvas = this.canvas.current!
-        this.gl = canvas.getContext("webgl2")!
+        canvas.width = this.width
+        canvas.height = this.height
 
-        let width = canvas.width = 720
-        let height = canvas.height = 360
-        
-        this.gl.viewport(0, 0, width, height)
+        let gl = this.gl = canvas.getContext("webgl2")!
+        gl.getExtension("EXT_color_buffer_float")
 
         // Compile shaders
-        let vertex = new Shader(this.gl, this.gl.VERTEX_SHADER, vertexSrc)
-        let fragment = new Shader(this.gl, this.gl.FRAGMENT_SHADER, fragmentSrc)
+        let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
+        let fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
 
-        this.program = new Program(this.gl, vertex, fragment)
+        this.program = new Program(gl, vertex, fragment)
 
         // Initialize projection matrix
         let matrix = this.program.uniformLocation("u_matrix")
-        this.gl.uniformMatrix3fv(matrix, true, Matrix3.projection(1, 1).data)
+        gl.uniformMatrix3fv(matrix, true, Matrix3.projection(this.width, this.height).data)
 
         // Bind attributes to buffers
-        this.vertices = new Buffer(this.gl, this.gl.FLOAT, 2)
-        this.colors = new Buffer(this.gl, this.gl.UNSIGNED_BYTE, 4)
+        this.vertices = new Buffer(gl, gl.FLOAT, 2)
+        this.colors = new Buffer(gl, gl.UNSIGNED_BYTE, 4)
 
         this.program.bindAttribute("position", this.vertices)
         this.program.bindAttribute("color", this.colors)
 
-        this.compute = new Compute(this.gl)
-        this.frame = new FrameBuffer(this.gl)
 
-        let texture = new Texture(this.gl, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE)
+        this.compute = new Compute(gl)
+        this.frame = new FrameBuffer(gl)
+
+        let texture = new Texture(gl, gl.RGBA8, this.width, this.height)
         this.frame.attatch(texture)
 
         this.draw()
@@ -65,33 +68,38 @@ export default class Renderer extends Component
     private draw(): void
     {
         window.requestAnimationFrame(this.draw.bind(this))
-
-        // Clear canvas
-        this.gl.clearColor(0, 0, 0, 0)
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+        let gl = this.gl
 
         this.program.use()
+        // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this.frame.bind()
 
-        this.vertices.write(this.gl.STATIC_DRAW, [
+        // Clear canvas
+        gl.clearColor(0, 0, 0, 0)
+        gl.clear(gl.COLOR_BUFFER_BIT)
+
+        gl.enable(gl.BLEND)
+        gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
+
+        this.vertices.write(gl.STATIC_DRAW, [
             new Vector2(0, 0),
-            new Vector2(1, 0),
-            new Vector2(0, 1),
-            new Vector2(0, 1),
-            new Vector2(1, 0),
-            new Vector2(1, 1)
+            new Vector2(this.width, 0),
+            new Vector2(0, this.height),
+            new Vector2(0, 0),
+            new Vector2(this.width, 0),
+            new Vector2(this.width, this.height)
         ])
-        this.colors.write(this.gl.STATIC_DRAW, [
-            new Color(255, 0, 0),
-            new Color(0, 255, 0),
-            new Color(0, 0, 255),
-            new Color(255, 255, 0),
-            new Color(0, 255, 255),
-            new Color(255, 0, 255)
+        this.colors.write(gl.STATIC_DRAW, [
+            new Color(255, 0, 0, 200),
+            new Color(0, 255, 0, 200),
+            new Color(0, 0, 255, 200),
+            new Color(255, 255, 0, 100),
+            new Color(0, 255, 255, 100),
+            new Color(255, 0, 255, 100)
         ])
 
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        gl.drawArrays(gl.TRIANGLES, 0, 6)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
         this.compute.use()
         this.compute.draw()

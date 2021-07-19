@@ -44,7 +44,10 @@ export default class Compute
 
     public draw(): void
     {
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
+        let gl = this.gl
+
+        gl.disable(gl.BLEND)
+        gl.drawArrays(gl.TRIANGLES, 0, 6)
     }
     
 }

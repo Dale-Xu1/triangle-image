@@ -9,18 +9,18 @@ export default class Program
 
     public constructor(private gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
     {
-        this.program = gl.createProgram()!
+        let program = this.program = gl.createProgram()!
         this.array = gl.createVertexArray()!
 
         // Link program
-        gl.attachShader(this.program, vertex.shader)
-        gl.attachShader(this.program, fragment.shader)
+        gl.attachShader(program, vertex.shader)
+        gl.attachShader(program, fragment.shader)
 
-        gl.linkProgram(this.program)
-        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS))
+        gl.linkProgram(program)
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS))
         {
-            let log = gl.getProgramInfoLog(this.program)!
-            gl.deleteProgram(this.program)
+            let log = gl.getProgramInfoLog(program)!
+            gl.deleteProgram(program)
 
             throw log
         }
@@ -31,19 +31,23 @@ export default class Program
 
     public use(): void
     {
-        this.gl.useProgram(this.program)
-        this.gl.bindVertexArray(this.array)
+        let gl = this.gl
+
+        gl.useProgram(this.program)
+        gl.bindVertexArray(this.array)
     }
 
 
     public bindAttribute(name: string, buffer: Buffer): void
     {
-        let attribute = this.gl.getAttribLocation(this.program, name)
+        let gl = this.gl
+
+        let attribute = gl.getAttribLocation(this.program, name)
         buffer.bind()
         
         // Instruct how to read data from buffer to attribute
-        this.gl.enableVertexAttribArray(attribute)
-        this.gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
+        gl.enableVertexAttribArray(attribute)
+        gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
     }
 
     public uniformLocation(name: string): WebGLUniformLocation
