@@ -35,7 +35,9 @@ export default class Renderer extends Component
         canvas.width = this.width
         canvas.height = this.height
 
-        let gl = this.gl = canvas.getContext("webgl2")!
+        this.gl = canvas.getContext("webgl2")!
+        let gl = this.gl
+
         gl.getExtension("EXT_color_buffer_float")
 
         // Compile shaders
@@ -62,7 +64,6 @@ export default class Renderer extends Component
         this.frame.attatch(texture)
 
         this.compute = new Compute(gl, texture)
-
         this.draw()
     }
 

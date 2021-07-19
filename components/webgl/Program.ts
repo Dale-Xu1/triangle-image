@@ -9,18 +9,18 @@ export default class Program
 
     public constructor(private gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
     {
-        let program = this.program = gl.createProgram()!
+        this.program = gl.createProgram()!
         this.array = gl.createVertexArray()!
 
         // Link program
-        gl.attachShader(program, vertex.shader)
-        gl.attachShader(program, fragment.shader)
+        gl.attachShader(this.program, vertex.shader)
+        gl.attachShader(this.program, fragment.shader)
 
-        gl.linkProgram(program)
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+        gl.linkProgram(this.program)
+        if (!gl.getProgramParameter(this.program, gl.LINK_STATUS))
         {
-            let log = gl.getProgramInfoLog(program)!
-            gl.deleteProgram(program)
+            let log = gl.getProgramInfoLog(this.program)!
+            gl.deleteProgram(this.program)
 
             throw log
         }
