@@ -3,6 +3,7 @@ import fragmentSrc from "./compute/fragment.glsl"
 
 import Buffer from "./webgl/Buffer"
 import Program, { Shader } from "./webgl/Program"
+import { Texture } from "./webgl/FrameBuffer"
 import Vector2 from "./webgl/math/Vector2"
 
 export default class Compute
@@ -21,7 +22,7 @@ export default class Compute
     private program: Program
 
 
-    public constructor(private gl: WebGL2RenderingContext)
+    public constructor(private gl: WebGL2RenderingContext, texture: Texture)
     {
         // Compile shaders
         let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
@@ -34,6 +35,10 @@ export default class Compute
         this.program.bindAttribute("position", vertices)
 
         vertices.write(gl.STATIC_DRAW, Compute.vertices)
+
+        // Bind data uniform to texture
+        let data = this.program.uniformLocation("data")
+        gl.uniform1i(data, texture.i)
     }
 
     public use(): void

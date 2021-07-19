@@ -56,11 +56,12 @@ export default class Renderer extends Component
         this.program.bindAttribute("color", this.colors)
 
 
-        this.compute = new Compute(gl)
         this.frame = new FrameBuffer(gl)
 
         let texture = new Texture(gl, gl.RGBA8, this.width, this.height)
         this.frame.attatch(texture)
+
+        this.compute = new Compute(gl, texture)
 
         this.draw()
     }

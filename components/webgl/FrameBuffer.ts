@@ -32,13 +32,21 @@ export default class FrameBuffer
 export class Texture
 {
 
+    private static index = 0
+
+
     public texture: WebGLTexture
+    public i: number
 
 
     public constructor(private gl: WebGL2RenderingContext,
         format: number, width: number, height: number)
     {
         this.texture = gl.createTexture()!
+        this.i = Texture.index++
+
+        // Bind texture to index
+        gl.activeTexture(gl.TEXTURE0 + this.i)
         this.bind()
 
         // Set parameters
