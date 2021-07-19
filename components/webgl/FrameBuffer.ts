@@ -16,14 +16,14 @@ export default class FrameBuffer
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.buffer)
     }
 
-    public attatch(texture: Texture): void
+    public attach(texture: Texture): void
     {
         let gl = this.gl
 
         this.bind()
         texture.bind()
 
-        // Attatch texture to frame buffer
+        // Attach texture to frame buffer
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.texture, 0)
     }
 
@@ -40,24 +40,30 @@ export class Texture
 
 
     public constructor(private gl: WebGL2RenderingContext,
-        format: number, width: number, height: number)
+        private format: number, private width: number, private height: number)
     {
         this.texture = gl.createTexture()!
         this.i = Texture.index++
 
-        // Bind texture to index
-        gl.activeTexture(gl.TEXTURE0 + this.i)
+        this.bind()
+    }
+
+
+    public write(data: ArrayBufferView | HTMLImageElement | null): void
+    {
+        let gl = this.gl
         this.bind()
 
         // Set parameters
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 
         // Allocate texture
-        let base = this.getBase(format)
-        let type = this.getType(format)
+        let base = this.getBase(this.format)
+        let type = this.getType(this.format)
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, base, type, null)
+        gl.texImage2D(gl.TEXTURE_2D, 0, this.format, this.width, this.height, 0, base, type, data as null)
     }
 
     private getBase(format: number): number
@@ -92,6 +98,9 @@ export class Texture
     public bind(): void
     {
         let gl = this.gl
+        
+        // Bind texture to index
+        gl.activeTexture(gl.TEXTURE0 + this.i)
         gl.bindTexture(gl.TEXTURE_2D, this.texture)
     }
 

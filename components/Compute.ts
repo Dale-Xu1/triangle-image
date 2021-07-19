@@ -22,7 +22,7 @@ export default class Compute
     private program: Program
 
 
-    public constructor(private gl: WebGL2RenderingContext, texture: Texture)
+    public constructor(private gl: WebGL2RenderingContext, render: Texture, texture: Texture)
     {
         // Compile shaders
         let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
@@ -38,7 +38,10 @@ export default class Compute
 
         // Bind data uniform to texture
         let data = this.program.uniformLocation("data")
-        gl.uniform1i(data, texture.i)
+        gl.uniform1i(data, render.i)
+
+        let target = this.program.uniformLocation("target")
+        gl.uniform1i(target, texture.i)
     }
 
     public use(): void

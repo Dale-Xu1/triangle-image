@@ -15,11 +15,12 @@ export default class Renderer extends Component
 {
 
     private canvas = React.createRef<HTMLCanvasElement>()
-    private gl!: WebGL2RenderingContext
+    private image = React.createRef<HTMLImageElement>()
 
-    private width = 720
-    private height = 360
-    
+    private width!: number
+    private height!: number
+
+    private gl!: WebGL2RenderingContext
     private program!: Program
 
     private vertices!: Buffer
@@ -32,13 +33,15 @@ export default class Renderer extends Component
     public componentDidMount(): void
     {
         let canvas = this.canvas.current!
-        canvas.width = this.width
-        canvas.height = this.height
+        let image = this.image.current!
+
+        this.width = canvas.width = image.width
+        this.height = canvas.height = image.height
 
         this.gl = canvas.getContext("webgl2")!
         let gl = this.gl
 
-        gl.getExtension("EXT_color_buffer_float")
+        // gl.getExtension("EXT_color_buffer_float")
 
         // Compile shaders
         let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
@@ -60,10 +63,15 @@ export default class Renderer extends Component
 
         this.frame = new FrameBuffer(gl)
 
+        let render = new Texture(gl, gl.RGBA8, this.width, this.height)
         let texture = new Texture(gl, gl.RGBA8, this.width, this.height)
-        this.frame.attatch(texture)
 
-        this.compute = new Compute(gl, texture)
+        render.write(null)
+        texture.write(image)
+
+        this.frame.attach(render)
+
+        this.compute = new Compute(gl, render, texture)
         this.draw()
     }
 
@@ -73,7 +81,6 @@ export default class Renderer extends Component
         let gl = this.gl
 
         this.program.use()
-        // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         this.frame.bind()
 
         // Clear canvas
@@ -101,17 +108,19 @@ export default class Renderer extends Component
         ])
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
         this.compute.use()
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
         this.compute.draw()
     }
-    
+
     public render(): ReactElement
     {
         return (
             <div>
-                <canvas ref={this.canvas}></canvas>
+                <canvas ref={this.canvas} />
+                <img src="/forest.jpg" alt="" ref={this.image} />
             </div>
         )
     }

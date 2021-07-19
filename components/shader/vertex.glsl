@@ -10,7 +10,7 @@ void main()
 {
     // Transform position
     vec3 transformed = u_matrix * vec3(position, 1);
-    gl_Position = vec4(transformed.xy, 0, 1);
 
+    gl_Position = vec4(transformed.xy, 0, 1);
     v_color = color;
 }
