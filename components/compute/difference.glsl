@@ -4,7 +4,7 @@ precision lowp float;
 uniform sampler2D data;
 uniform sampler2D target;
 
-out vec4 color;
+out float color;
 
 void main()
 {
@@ -15,6 +15,9 @@ void main()
     vec3 a = value.rgb + (1.0 - value.a);
     vec3 b = texelFetch(target, i, 0).rgb;
 
-    vec3 diff = a - b;
-    color = vec4(diff * diff, 1);
+    vec3 c = a - b;
+    c = c * c;
+
+    // Average color channels
+    color = (c.r + c.g + c.b) / 3.0;
 }

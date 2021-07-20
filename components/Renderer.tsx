@@ -3,13 +3,12 @@ import React, { Component, ReactElement } from "react"
 import vertexSrc from "./shader/vertex.glsl"
 import fragmentSrc from "./shader/fragment.glsl"
 
-import Compute from "./Compute"
 import Buffer from "./webgl/Buffer"
 import Color from "./webgl/math/Color"
 import Matrix3 from "./webgl/math/Matrix3"
 import Vector2 from "./webgl/math/Vector2"
 import Program, { Shader } from "./webgl/Program"
-import FrameBuffer, { Texture } from "./webgl/FrameBuffer"
+import Comparer from "./Comparer"
 
 export default class Renderer extends Component
 {
@@ -21,13 +20,12 @@ export default class Renderer extends Component
     private height!: number
 
     private gl!: WebGL2RenderingContext
-    private program!: Program
 
+    private program!: Program
+    private comparer!: Comparer
+    
     private vertices!: Buffer
     private colors!: Buffer
-
-    private compute!: Compute
-    private frame!: FrameBuffer
 
 
     public componentDidMount(): void
@@ -41,7 +39,8 @@ export default class Renderer extends Component
         this.gl = canvas.getContext("webgl2")!
         let gl = this.gl
 
-        // gl.getExtension("EXT_color_buffer_float")
+        gl.getExtension("EXT_color_buffer_float")
+        gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
         // Compile shaders
         let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
@@ -51,7 +50,9 @@ export default class Renderer extends Component
 
         // Initialize projection matrix
         let matrix = this.program.uniformLocation("u_matrix")
-        gl.uniformMatrix3fv(matrix, true, Matrix3.projection(this.width, this.height).data)
+        let projection = Matrix3.projection(this.width, this.height)
+
+        gl.uniformMatrix3fv(matrix, true, projection.data)
 
         // Bind attributes to buffers
         this.vertices = new Buffer(gl, gl.FLOAT, 2)
@@ -60,35 +61,26 @@ export default class Renderer extends Component
         this.program.bindAttribute("position", this.vertices)
         this.program.bindAttribute("color", this.colors)
 
+        // Feed rendered triangles to comparer
+        this.comparer = new Comparer(gl, image)
+        this.program.attachTexture(this.comparer.input)
 
-        this.frame = new FrameBuffer(gl)
-
-        let render = new Texture(gl, gl.RGBA8, this.width, this.height)
-        let texture = new Texture(gl, gl.RGBA8, this.width, this.height)
-
-        render.write(null)
-        texture.write(image)
-
-        this.frame.attach(render)
-
-        this.compute = new Compute(gl, render, texture)
         this.draw()
     }
 
     private draw(): void
     {
         window.requestAnimationFrame(this.draw.bind(this))
-        let gl = this.gl
 
+        let gl = this.gl
         this.program.use()
-        this.frame.bind()
+
+        gl.viewport(0, 0, this.width, this.height)
+        gl.enable(gl.BLEND)
 
         // Clear canvas
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
-
-        gl.enable(gl.BLEND)
-        gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
         this.vertices.write(gl.STATIC_DRAW, [
             new Vector2(0, 0),
@@ -108,11 +100,7 @@ export default class Renderer extends Component
         ])
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)
-
-        this.compute.use()
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-        this.compute.draw()
+        this.comparer.run()
     }
 
     public render(): ReactElement

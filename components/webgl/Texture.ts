@@ -1,49 +1,18 @@
-export default class FrameBuffer
-{
-
-    private buffer: WebGLFramebuffer
-
-
-    public constructor(private gl: WebGL2RenderingContext)
-    {
-        this.buffer = gl.createFramebuffer()!
-    }
-
-
-    public bind(): void
-    {
-        let gl = this.gl
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.buffer)
-    }
-
-    public attach(texture: Texture): void
-    {
-        let gl = this.gl
-
-        this.bind()
-        texture.bind()
-
-        // Attach texture to frame buffer
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.texture, 0)
-    }
-
-}
-
-export class Texture
+export default class Texture
 {
 
     private static index = 0
 
 
     public texture: WebGLTexture
-    public i: number
+    public index: number
 
 
     public constructor(private gl: WebGL2RenderingContext,
-        private format: number, private width: number, private height: number)
+        private format: number, public width: number, public height: number)
     {
         this.texture = gl.createTexture()!
-        this.i = Texture.index++
+        this.index = Texture.index++
 
         this.bind()
     }
@@ -98,9 +67,9 @@ export class Texture
     public bind(): void
     {
         let gl = this.gl
-        
+
         // Bind texture to index
-        gl.activeTexture(gl.TEXTURE0 + this.i)
+        gl.activeTexture(gl.TEXTURE0 + this.index)
         gl.bindTexture(gl.TEXTURE_2D, this.texture)
     }
 

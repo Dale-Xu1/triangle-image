@@ -1,16 +1,19 @@
-import Buffer from "./Buffer"
+import Buffer, { VertexArray } from "./Buffer"
+import Texture from "./Texture"
 
 export default class Program
 {
 
     private program: WebGLProgram
-    private array: WebGLVertexArrayObject
+
+    private array: VertexArray
+    private frame: FrameBuffer | null = null
 
 
     public constructor(private gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
     {
         this.program = gl.createProgram()!
-        this.array = gl.createVertexArray()!
+        this.array = new VertexArray(gl)
 
         // Link program
         gl.attachShader(this.program, vertex.shader)
@@ -34,7 +37,11 @@ export default class Program
         let gl = this.gl
 
         gl.useProgram(this.program)
-        gl.bindVertexArray(this.array)
+        this.array.bind()
+
+        // Bind to canvas if no frame buffer was supplied
+        if (this.frame === null) gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        else this.frame.bind()
     }
 
 
@@ -42,12 +49,9 @@ export default class Program
     {
         let gl = this.gl
 
+        // Get location of attribute
         let attribute = gl.getAttribLocation(this.program, name)
-        buffer.bind()
-        
-        // Instruct how to read data from buffer to attribute
-        gl.enableVertexAttribArray(attribute)
-        gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
+        this.array.attributePointer(attribute, buffer) // Point attribute to buffer
     }
 
     public uniformLocation(name: string): WebGLUniformLocation
@@ -55,6 +59,44 @@ export default class Program
         return this.gl.getUniformLocation(this.program, name)!
     }
  
+    public attachTexture(texture: Texture): void
+    {
+        // Create frame buffer if one doesn't exist
+        if (this.frame === null) this.frame = new FrameBuffer(this.gl)
+        this.frame.attach(texture)
+    }
+
+}
+
+export class FrameBuffer
+{
+
+    private buffer: WebGLFramebuffer
+
+
+    public constructor(private gl: WebGL2RenderingContext)
+    {
+        this.buffer = gl.createFramebuffer()!
+    }
+
+
+    public bind(): void
+    {
+        let gl = this.gl
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.buffer)
+    }
+
+    public attach(texture: Texture): void
+    {
+        let gl = this.gl
+
+        this.bind()
+        texture.bind()
+
+        // Attach texture to frame buffer
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.texture, 0)
+    }
+
 }
 
 export class Shader

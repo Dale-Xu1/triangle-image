@@ -54,3 +54,34 @@ export default class Buffer
     }
 
 }
+
+export class VertexArray
+{
+
+    private array: WebGLVertexArrayObject
+
+
+    public constructor(private gl: WebGL2RenderingContext)
+    {
+        this.array = gl.createVertexArray()!
+    }
+
+
+    public bind(): void
+    {
+        this.gl.bindVertexArray(this.array)
+    }
+
+    public attributePointer(attribute: number, buffer: Buffer)
+    {
+        let gl = this.gl
+
+        this.bind()
+        buffer.bind()
+
+        // Instruct how to read data from buffer to attribute
+        gl.enableVertexAttribArray(attribute)
+        gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
+    }
+    
+}
