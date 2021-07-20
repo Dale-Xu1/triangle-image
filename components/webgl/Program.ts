@@ -63,7 +63,9 @@ export default class Program
     {
         // Create frame buffer if one doesn't exist
         if (this.frame === null) this.frame = new FrameBuffer(this.gl)
-        this.frame.attach(texture)
+
+        texture.write(null)
+        this.frame.attachTexture(texture)
     }
 
 }
@@ -86,7 +88,7 @@ export class FrameBuffer
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.buffer)
     }
 
-    public attach(texture: Texture): void
+    public attachTexture(texture: Texture): void
     {
         let gl = this.gl
 

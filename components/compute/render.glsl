@@ -1,5 +1,5 @@
 #version 300 es
-precision lowp float;
+precision mediump float;
 
 uniform sampler2D render;
 out vec4 color;

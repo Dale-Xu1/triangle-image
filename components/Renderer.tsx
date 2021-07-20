@@ -3,12 +3,13 @@ import React, { Component, ReactElement } from "react"
 import vertexSrc from "./shader/vertex.glsl"
 import fragmentSrc from "./shader/fragment.glsl"
 
+import Comparer from "./Comparer"
 import Buffer from "./webgl/Buffer"
 import Color from "./webgl/math/Color"
 import Matrix3 from "./webgl/math/Matrix3"
-import Vector2 from "./webgl/math/Vector2"
 import Program, { Shader } from "./webgl/Program"
-import Comparer from "./Comparer"
+import Texture from "./webgl/Texture"
+import Vector2 from "./webgl/math/Vector2"
 
 export default class Renderer extends Component
 {
@@ -48,6 +49,10 @@ export default class Renderer extends Component
 
         this.program = new Program(gl, vertex, fragment)
 
+        // Render to texture
+        let input = new Texture(gl, gl.RGBA8, this.width, this.height)
+        this.program.attachTexture(input)
+
         // Initialize projection matrix
         let matrix = this.program.uniformLocation("u_matrix")
         let projection = Matrix3.projection(this.width, this.height)
@@ -61,10 +66,7 @@ export default class Renderer extends Component
         this.program.bindAttribute("position", this.vertices)
         this.program.bindAttribute("color", this.colors)
 
-        // Feed rendered triangles to comparer
-        this.comparer = new Comparer(gl, image)
-        this.program.attachTexture(this.comparer.input)
-
+        this.comparer = new Comparer(gl, input, image)
         this.draw()
     }
 
@@ -82,24 +84,24 @@ export default class Renderer extends Component
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
 
-        this.vertices.write(gl.STATIC_DRAW, [
-            new Vector2(0, 0),
-            new Vector2(this.width, 0),
-            new Vector2(0, this.height),
-            new Vector2(0, 0),
-            new Vector2(this.width, 0),
-            new Vector2(this.width, this.height)
-        ])
-        this.colors.write(gl.STATIC_DRAW, [
-            new Color(255, 0, 0, 200),
-            new Color(0, 255, 0, 200),
-            new Color(0, 0, 255, 200),
-            new Color(255, 255, 0, 100),
-            new Color(0, 255, 255, 100),
-            new Color(255, 0, 255, 100)
-        ])
+        // this.vertices.write(gl.STATIC_DRAW, [
+        //     new Vector2(0, 0),
+        //     new Vector2(this.width, 0),
+        //     new Vector2(0, this.height),
+        //     new Vector2(0, 0),
+        //     new Vector2(this.width, 0),
+        //     new Vector2(this.width, this.height)
+        // ])
+        // this.colors.write(gl.STATIC_DRAW, [
+        //     new Color(255, 0, 0, 200),
+        //     new Color(0, 255, 0, 200),
+        //     new Color(0, 0, 255, 200),
+        //     new Color(255, 255, 0, 100),
+        //     new Color(0, 255, 255, 100),
+        //     new Color(255, 0, 255, 100)
+        // ])
 
-        gl.drawArrays(gl.TRIANGLES, 0, 6)
+        // gl.drawArrays(gl.TRIANGLES, 0, 6)
         this.comparer.run()
     }
 

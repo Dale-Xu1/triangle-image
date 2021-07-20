@@ -20,6 +20,9 @@ export default class Compute
 
     private program: Program
 
+    private width: number
+    private height: number
+
 
     public constructor(private gl: WebGL2RenderingContext, fragmentSrc: string, texture: Texture | null = null)
     {
@@ -29,6 +32,10 @@ export default class Compute
 
         this.program = new Program(gl, vertex, fragment)
 
+        // Get result dimensions
+        this.width = texture === null ? gl.canvas.width : texture.width // No texture means we're rendering to the canvas
+        this.height = texture === null ? gl.canvas.height : texture.height
+
         // Write quad to position attribute
         let vertices = new Buffer(gl, gl.FLOAT, 2)
         this.program.bindAttribute("position", vertices)
@@ -36,11 +43,7 @@ export default class Compute
         vertices.write(gl.STATIC_DRAW, Compute.vertices)
 
         // Attach texture to be rendered to
-        if (texture !== null)
-        {
-            texture.write(null)
-            this.program.attachTexture(texture)
-        }
+        if (texture !== null) this.program.attachTexture(texture)
     }
 
 
@@ -61,7 +64,7 @@ export default class Compute
         let gl = this.gl
         this.program.use()
 
-        // gl.viewport(0, 0, )
+        gl.viewport(0, 0, this.width, this.height)
         gl.drawArrays(gl.TRIANGLES, 0, 6)
     }
     
