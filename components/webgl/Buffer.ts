@@ -3,11 +3,11 @@ import { Vector } from "./math/Vector2"
 export default class Buffer
 {
 
-    private buffer: WebGLBuffer
+    private readonly buffer: WebGLBuffer
 
 
-    public constructor(private gl: WebGL2RenderingContext,
-        public type: number, public length: number, public normalized = true)
+    public constructor(private readonly gl: WebGL2RenderingContext,
+        public readonly type: number, public readonly length: number, public readonly normalized = true)
     {
         this.buffer = gl.createBuffer()!
     }
@@ -15,29 +15,29 @@ export default class Buffer
 
     public bind(): void
     {
-        let gl = this.gl
+        const gl = this.gl
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
     }
 
 
     public write(usage: number, vectors: Vector[]): void
     {
-        let gl = this.gl
+        const gl = this.gl
 
         // Flatten vectors to data array
-        let data: number[] = []
-        for (let vector of vectors) data.push(...vector.data)
+        const data: number[] = []
+        for (const vector of vectors) data.push(...vector.data)
 
         this.bind()
 
         // Write data to buffer
-        let buffer = this.cast(data)
+        const buffer = this.cast(data)
         gl.bufferData(gl.ARRAY_BUFFER, buffer, usage)
     }
 
     private cast(data: number[]): BufferSource
     {
-        let gl = this.gl
+        const gl = this.gl
 
         switch (this.type)
         {
@@ -58,10 +58,10 @@ export default class Buffer
 export class VertexArray
 {
 
-    private array: WebGLVertexArrayObject
+    private readonly array: WebGLVertexArrayObject
 
 
-    public constructor(private gl: WebGL2RenderingContext)
+    public constructor(private readonly gl: WebGL2RenderingContext)
     {
         this.array = gl.createVertexArray()!
     }
@@ -74,7 +74,7 @@ export class VertexArray
 
     public attributePointer(attribute: number, buffer: Buffer)
     {
-        let gl = this.gl
+        const gl = this.gl
 
         this.bind()
         buffer.bind()

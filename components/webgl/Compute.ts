@@ -8,7 +8,7 @@ import Vector2 from "./math/Vector2"
 export default class Compute
 {
 
-    private static vertices =
+    private static readonly vertices =
     [
         new Vector2(-1, -1),
         new Vector2( 1, -1),
@@ -18,17 +18,17 @@ export default class Compute
         new Vector2( 1,  1),
     ]
 
-    private program: Program
+    private readonly program: Program
 
-    private width: number
-    private height: number
+    private readonly width: number
+    private readonly height: number
 
 
-    public constructor(private gl: WebGL2RenderingContext, fragmentSrc: string, texture: Texture | null = null)
+    public constructor(private readonly gl: WebGL2RenderingContext, fragmentSrc: string, texture: Texture | null = null)
     {
         // Compile shaders
-        let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
-        let fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
+        const vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
+        const fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
 
         this.program = new Program(gl, vertex, fragment)
 
@@ -37,7 +37,7 @@ export default class Compute
         this.height = texture === null ? gl.canvas.height : texture.height
 
         // Write quad to position attribute
-        let vertices = new Buffer(gl, gl.FLOAT, 2)
+        const vertices = new Buffer(gl, gl.FLOAT, 2)
         this.program.bindAttribute("position", vertices)
 
         vertices.write(gl.STATIC_DRAW, Compute.vertices)
@@ -54,14 +54,14 @@ export default class Compute
 
     public uniformTexture(name: string, texture: Texture): void
     {
-        let location = this.uniformLocation(name)
+        const location = this.uniformLocation(name)
         this.gl.uniform1i(location, texture.index)
     }
 
 
     public run(): void
     {
-        let gl = this.gl
+        const gl = this.gl
         this.program.use()
 
         gl.viewport(0, 0, this.width, this.height)

@@ -4,12 +4,12 @@ export default class Texture
     private static index = 0
 
 
-    public texture: WebGLTexture
-    public index: number
+    public readonly texture: WebGLTexture
+    public readonly index: number
 
 
-    public constructor(private gl: WebGL2RenderingContext,
-        private format: number, public width: number, public height: number)
+    public constructor(private readonly gl: WebGL2RenderingContext,
+        private readonly format: number, public readonly width: number, public readonly height: number)
     {
         this.texture = gl.createTexture()!
         this.index = Texture.index++
@@ -20,7 +20,7 @@ export default class Texture
 
     public write(data: ArrayBufferView | HTMLImageElement | null): void
     {
-        let gl = this.gl
+        const gl = this.gl
         this.bind()
 
         // Set parameters
@@ -29,15 +29,15 @@ export default class Texture
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 
         // Allocate texture
-        let base = this.getBase(this.format)
-        let type = this.getType(this.format)
+        const base = this.getBase(this.format)
+        const type = this.getType(this.format)
 
         gl.texImage2D(gl.TEXTURE_2D, 0, this.format, this.width, this.height, 0, base, type, data as null)
     }
 
     private getBase(format: number): number
     {
-        let gl = this.gl
+        const gl = this.gl
 
         switch (format)
         {
@@ -52,7 +52,7 @@ export default class Texture
 
     private getType(format: number): number
     {
-        let gl = this.gl
+        const gl = this.gl
 
         switch (format)
         {
@@ -66,7 +66,7 @@ export default class Texture
 
     public bind(): void
     {
-        let gl = this.gl
+        const gl = this.gl
 
         // Bind texture to index
         gl.activeTexture(gl.TEXTURE0 + this.index)

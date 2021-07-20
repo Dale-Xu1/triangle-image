@@ -1,7 +1,7 @@
 export abstract class Vector
 {
 
-    protected constructor(public data: number[]) { }
+    protected constructor(public readonly data: number[]) { }
 
 }
 

@@ -4,13 +4,13 @@ import Texture from "./Texture"
 export default class Program
 {
 
-    private program: WebGLProgram
+    private readonly program: WebGLProgram
 
-    private array: VertexArray
+    private readonly array: VertexArray
     private frame: FrameBuffer | null = null
 
 
-    public constructor(private gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
+    public constructor(private readonly gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
     {
         this.program = gl.createProgram()!
         this.array = new VertexArray(gl)
@@ -22,7 +22,7 @@ export default class Program
         gl.linkProgram(this.program)
         if (!gl.getProgramParameter(this.program, gl.LINK_STATUS))
         {
-            let log = gl.getProgramInfoLog(this.program)!
+            const log = gl.getProgramInfoLog(this.program)!
             gl.deleteProgram(this.program)
 
             throw log
@@ -34,7 +34,7 @@ export default class Program
 
     public use(): void
     {
-        let gl = this.gl
+        const gl = this.gl
 
         gl.useProgram(this.program)
         this.array.bind()
@@ -47,10 +47,10 @@ export default class Program
 
     public bindAttribute(name: string, buffer: Buffer): void
     {
-        let gl = this.gl
+        const gl = this.gl
 
         // Get location of attribute
-        let attribute = gl.getAttribLocation(this.program, name)
+        const attribute = gl.getAttribLocation(this.program, name)
         this.array.attributePointer(attribute, buffer) // Point attribute to buffer
     }
 
@@ -73,10 +73,10 @@ export default class Program
 export class FrameBuffer
 {
 
-    private buffer: WebGLFramebuffer
+    private readonly buffer: WebGLFramebuffer
 
 
-    public constructor(private gl: WebGL2RenderingContext)
+    public constructor(private readonly gl: WebGL2RenderingContext)
     {
         this.buffer = gl.createFramebuffer()!
     }
@@ -84,13 +84,13 @@ export class FrameBuffer
 
     public bind(): void
     {
-        let gl = this.gl
+        const gl = this.gl
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.buffer)
     }
 
     public attachTexture(texture: Texture): void
     {
-        let gl = this.gl
+        const gl = this.gl
 
         this.bind()
         texture.bind()
@@ -104,7 +104,7 @@ export class FrameBuffer
 export class Shader
 {
 
-    public shader: WebGLShader
+    public readonly shader: WebGLShader
 
 
     public constructor(gl: WebGL2RenderingContext, type: number, source: string)
@@ -116,7 +116,7 @@ export class Shader
 
         if (!gl.getShaderParameter(this.shader, gl.COMPILE_STATUS))
         {
-            let log = gl.getShaderInfoLog(this.shader)!
+            const log = gl.getShaderInfoLog(this.shader)!
             gl.deleteShader(this.shader)
 
             throw log

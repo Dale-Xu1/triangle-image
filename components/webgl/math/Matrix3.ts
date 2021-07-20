@@ -1,7 +1,7 @@
 export default class Matrix3
 {
 
-    public static identity = new Matrix3([
+    public static readonly identity = new Matrix3([
         1, 0, 0,
         0, 1, 0,
         0, 0, 1
@@ -23,8 +23,8 @@ export default class Matrix3
 
     public static rotation(a: number): Matrix3
     {
-        let s = Math.sin(a)
-        let c = Math.cos(a)
+        const s = Math.sin(a)
+        const c = Math.cos(a)
 
         return new Matrix3([
             c,-s, 0,
@@ -43,13 +43,13 @@ export default class Matrix3
     }
 
 
-    public constructor(public data: number[]) { }
+    public constructor(public readonly data: number[]) { }
 
 
     public mult(matrix: Matrix3): Matrix3
     {
-        let a = this.data
-        let b = matrix.data
+        const a = this.data
+        const b = matrix.data
 
         return new Matrix3([
             (a[0] * b[0]) + (a[3] * b[1]) + (a[6] * b[2]),

@@ -5,17 +5,15 @@ import fragmentSrc from "./shader/fragment.glsl"
 
 import Comparer from "./Comparer"
 import Buffer from "./webgl/Buffer"
-import Color from "./webgl/math/Color"
 import Matrix3 from "./webgl/math/Matrix3"
 import Program, { Shader } from "./webgl/Program"
 import Texture from "./webgl/Texture"
-import Vector2 from "./webgl/math/Vector2"
 
 export default class Renderer extends Component
 {
 
-    private canvas = React.createRef<HTMLCanvasElement>()
-    private image = React.createRef<HTMLImageElement>()
+    private readonly canvas = React.createRef<HTMLCanvasElement>()
+    private readonly image = React.createRef<HTMLImageElement>()
 
     private width!: number
     private height!: number
@@ -31,31 +29,31 @@ export default class Renderer extends Component
 
     public componentDidMount(): void
     {
-        let canvas = this.canvas.current!
-        let image = this.image.current!
+        const canvas = this.canvas.current!
+        const image = this.image.current!
 
         this.width = canvas.width = image.width
         this.height = canvas.height = image.height
 
         this.gl = canvas.getContext("webgl2")!
-        let gl = this.gl
+        const gl = this.gl
 
         gl.getExtension("EXT_color_buffer_float")
         gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 
         // Compile shaders
-        let vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
-        let fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
+        const vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
+        const fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
 
         this.program = new Program(gl, vertex, fragment)
 
         // Render to texture
-        let input = new Texture(gl, gl.RGBA8, this.width, this.height)
+        const input = new Texture(gl, gl.RGBA8, this.width, this.height)
         this.program.attachTexture(input)
 
         // Initialize projection matrix
-        let matrix = this.program.uniformLocation("u_matrix")
-        let projection = Matrix3.projection(this.width, this.height)
+        const matrix = this.program.uniformLocation("u_matrix")
+        const projection = Matrix3.projection(this.width, this.height)
 
         gl.uniformMatrix3fv(matrix, true, projection.data)
 
@@ -74,7 +72,7 @@ export default class Renderer extends Component
     {
         window.requestAnimationFrame(this.draw.bind(this))
 
-        let gl = this.gl
+        const gl = this.gl
         this.program.use()
 
         gl.viewport(0, 0, this.width, this.height)
