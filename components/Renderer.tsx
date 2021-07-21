@@ -5,7 +5,9 @@ import fragmentSrc from "./shader/fragment.glsl"
 
 import Comparer from "./Comparer"
 import Buffer from "./webgl/Buffer"
+import Color from "./webgl/math/Color"
 import Matrix3 from "./webgl/math/Matrix3"
+import Vector2 from "./webgl/math/Vector2"
 import Program, { Shader } from "./webgl/Program"
 import Texture from "./webgl/Texture"
 
@@ -82,24 +84,24 @@ export default class Renderer extends Component
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
 
-        // this.vertices.write(gl.STATIC_DRAW, [
-        //     new Vector2(0, 0),
-        //     new Vector2(this.width, 0),
-        //     new Vector2(0, this.height),
-        //     new Vector2(0, 0),
-        //     new Vector2(this.width, 0),
-        //     new Vector2(this.width, this.height)
-        // ])
-        // this.colors.write(gl.STATIC_DRAW, [
-        //     new Color(255, 0, 0, 200),
-        //     new Color(0, 255, 0, 200),
-        //     new Color(0, 0, 255, 200),
-        //     new Color(255, 255, 0, 100),
-        //     new Color(0, 255, 255, 100),
-        //     new Color(255, 0, 255, 100)
-        // ])
+        this.vertices.write(gl.STATIC_DRAW, [
+            new Vector2(0, 0),
+            new Vector2(this.width, 0),
+            new Vector2(0, this.height),
+            new Vector2(0, 0),
+            new Vector2(this.width, 0),
+            new Vector2(this.width, this.height)
+        ])
+        this.colors.write(gl.STATIC_DRAW, [
+            new Color(255, 0, 0, 200),
+            new Color(0, 255, 0, 200),
+            new Color(0, 0, 255, 200),
+            new Color(255, 255, 0, 100),
+            new Color(0, 255, 255, 100),
+            new Color(255, 0, 255, 100)
+        ])
 
-        // gl.drawArrays(gl.TRIANGLES, 0, 6)
+        gl.drawArrays(gl.TRIANGLES, 0, 6)
         this.comparer.run()
     }
 

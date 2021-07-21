@@ -1,5 +1,6 @@
 import differenceSrc from "./compute/difference.glsl"
 import sumSrc from "./compute/sum.glsl"
+import averageSrc from "./compute/average.glsl"
 import renderSrc from "./compute/render.glsl"
 
 import Compute from "./webgl/Compute"
@@ -10,6 +11,7 @@ export default class Comparer
 
     private readonly difference: Compute
     private readonly sum: Compute
+    private readonly average: Compute
     private readonly render: Compute
 
 
@@ -34,12 +36,21 @@ export default class Comparer
 
         this.sum.uniformTexture("difference", difference)
 
-        const location = this.sum.uniformLocation("height")
-        gl.uniform1i(location, height)
+        const heightLocation = this.sum.uniformLocation("height")
+        gl.uniform1i(heightLocation, height)
+
+        // Average columns
+        const average = new Texture(gl, gl.R32F, 1, 1)
+        this.average = new Compute(gl, averageSrc, average)
+
+        this.average.uniformTexture("difference", sum)
+
+        const widthLocation = this.average.uniformLocation("width")
+        gl.uniform1i(widthLocation, width)
 
         // Render result so we can monitor it
         this.render = new Compute(gl, renderSrc)
-        this.render.uniformTexture("render", difference)
+        this.render.uniformTexture("render", input)
     }
 
 
@@ -51,7 +62,14 @@ export default class Comparer
         // Run compute shaders
         this.difference.run()
         this.sum.run()
-        this.render.run() // This one doesn't really compute anything
+        this.average.run()
+
+        // Read final result
+        const result = new Float32Array(1)
+        gl.readPixels(0, 0, 1, 1, gl.RED, gl.FLOAT, result)
+
+        // console.log(result[0])
+        this.render.run()
     }
 
 }
