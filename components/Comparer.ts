@@ -12,10 +12,11 @@ export default class Comparer
     private readonly difference: Compute
     private readonly sum: Compute
     private readonly average: Compute
+
     private readonly render: Compute
 
 
-    public constructor(private readonly gl: WebGL2RenderingContext, input: Texture, image: HTMLImageElement)
+    public constructor(private readonly gl: WebGL2RenderingContext, image: HTMLImageElement, input: Texture)
     {
         const width = image.width
         const height = image.height
@@ -54,7 +55,7 @@ export default class Comparer
     }
 
 
-    public run(): void
+    public compare(): number
     {
         const gl = this.gl
         gl.disable(gl.BLEND)
@@ -68,8 +69,8 @@ export default class Comparer
         const result = new Float32Array(1)
         gl.readPixels(0, 0, 1, 1, gl.RED, gl.FLOAT, result)
 
-        // console.log(result[0])
         this.render.run()
+        return result[0]
     }
 
 }

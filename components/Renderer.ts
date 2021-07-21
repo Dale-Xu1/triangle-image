@@ -1,44 +1,29 @@
-import React, { Component, ReactElement } from "react"
-
 import vertexSrc from "./shader/vertex.glsl"
 import fragmentSrc from "./shader/fragment.glsl"
 
-import Comparer from "./Comparer"
 import Buffer from "./webgl/Buffer"
 import Color from "./webgl/math/Color"
 import Matrix3 from "./webgl/math/Matrix3"
 import Vector2 from "./webgl/math/Vector2"
 import Program, { Shader } from "./webgl/Program"
 import Texture from "./webgl/Texture"
-
-export default class Renderer extends Component
+ 
+export default class Renderer
 {
 
-    private readonly canvas = React.createRef<HTMLCanvasElement>()
-    private readonly image = React.createRef<HTMLImageElement>()
-
-    private width!: number
-    private height!: number
-
-    private gl!: WebGL2RenderingContext
-
-    private program!: Program
-    private comparer!: Comparer
+    private readonly program: Program
     
-    private vertices!: Buffer
-    private colors!: Buffer
+    private readonly width: number
+    private readonly height: number
 
+    private readonly vertices: Buffer
+    private readonly colors: Buffer
 
-    public componentDidMount(): void
+    
+    public constructor(private gl: WebGL2RenderingContext)
     {
-        const canvas = this.canvas.current!
-        const image = this.image.current!
-
-        this.width = canvas.width = image.width
-        this.height = canvas.height = image.height
-
-        this.gl = canvas.getContext("webgl2")!
-        const gl = this.gl
+        this.width = gl.canvas.width
+        this.height = gl.canvas.height
 
         gl.getExtension("EXT_color_buffer_float")
         gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
@@ -48,10 +33,6 @@ export default class Renderer extends Component
         const fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
 
         this.program = new Program(gl, vertex, fragment)
-
-        // Render to texture
-        const input = new Texture(gl, gl.RGBA8, this.width, this.height)
-        this.program.attachTexture(input)
 
         // Initialize projection matrix
         const matrix = this.program.uniformLocation("u_matrix")
@@ -65,15 +46,16 @@ export default class Renderer extends Component
 
         this.program.bindAttribute("position", this.vertices)
         this.program.bindAttribute("color", this.colors)
-
-        this.comparer = new Comparer(gl, input, image)
-        this.draw()
     }
 
-    private draw(): void
-    {
-        window.requestAnimationFrame(this.draw.bind(this))
 
+    public attachTexture(texture: Texture): void
+    {
+        this.program.attachTexture(texture)
+    }
+
+    public render(): void
+    {
         const gl = this.gl
         this.program.use()
 
@@ -102,17 +84,6 @@ export default class Renderer extends Component
         ])
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)
-        this.comparer.run()
-    }
-
-    public render(): ReactElement
-    {
-        return (
-            <div>
-                <canvas ref={this.canvas} />
-                <img src="/forest.jpg" alt="" ref={this.image} />
-            </div>
-        )
     }
 
 }
