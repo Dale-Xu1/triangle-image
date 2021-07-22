@@ -70,14 +70,17 @@ void main()
     vec3[] data = getData(u_data, i);
     vec3[] target = getData(u_target, i);
 
-    vec3 a = sobel(data);
-    vec3 b = sobel(target);
+    vec3 a = data[4]; // Index 4 is the middle pixel
+    vec3 b = target[4];
 
-    color = (b.r + b.g + b.b) / 3.0;
+    vec3 d = sobel(data);
+    vec3 t = sobel(target);
 
-    // vec3 c = a - b;
-    // c = c * c;
+    // Calculate difference in colors and edges
+    vec3 c = a - b;
+    vec3 s = (d - t) * 0.4;
 
-    // // Average color channels
-    // color = (c.r + c.g + c.b) / 3.0;
+    // Average color channels
+    vec3 diff = c * c + s * s;
+    color = (diff.r + diff.g + diff.b) / 3.0;
 }
