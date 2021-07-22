@@ -4,10 +4,24 @@ import averageSrc from "./compute/average.glsl"
 import renderSrc from "./compute/render.glsl"
 
 import Compute from "./webgl/Compute"
+import Matrix3 from "./webgl/math/Matrix3"
 import Texture from "./webgl/Texture"
 
 export default class Comparer
 {
+
+    private static readonly sobelX = new Matrix3([
+        1,  0, -1,
+        2,  0, -2,
+        1,  0, -1
+    ])
+
+    private static readonly sobelY = new Matrix3([
+        1,  2,  1,
+        0,  0,  0,
+       -1, -2, -1
+    ])
+
 
     private readonly difference: Compute
     private readonly sum: Compute
@@ -28,30 +42,31 @@ export default class Comparer
         const difference = new Texture(gl, gl.R32F, width, height)
         this.difference = new Compute(gl, differenceSrc, difference)
 
-        this.difference.uniformTexture("data", input)
-        this.difference.uniformTexture("target", target)
+        this.difference.uniformTexture("u_data", input)
+        this.difference.uniformTexture("u_target", target)
+
+        gl.uniform2i(this.difference.uniformLocation("u_resolution"), width, height)
+
+        gl.uniform1fv(this.difference.uniformLocation("u_sobelX"), Comparer.sobelX.data)
+        gl.uniform1fv(this.difference.uniformLocation("u_sobelY"), Comparer.sobelY.data)
 
         // Sum columns
         const sum = new Texture(gl, gl.R32F, width, 1)
         this.sum = new Compute(gl, sumSrc, sum)
 
-        this.sum.uniformTexture("difference", difference)
-
-        const heightLocation = this.sum.uniformLocation("height")
-        gl.uniform1i(heightLocation, height)
+        this.sum.uniformTexture("u_difference", difference)
+        gl.uniform1i(this.sum.uniformLocation("u_height"), height)
 
         // Average columns
         const average = new Texture(gl, gl.R32F, 1, 1)
         this.average = new Compute(gl, averageSrc, average)
 
-        this.average.uniformTexture("difference", sum)
-
-        const widthLocation = this.average.uniformLocation("width")
-        gl.uniform1i(widthLocation, width)
+        this.average.uniformTexture("u_difference", sum)
+        gl.uniform1i(this.average.uniformLocation("u_width"), width)
 
         // Render result so we can monitor it
         this.render = new Compute(gl, renderSrc)
-        this.render.uniformTexture("render", input)
+        this.render.uniformTexture("u_render", difference)
     }
 
 

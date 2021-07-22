@@ -1,11 +1,11 @@
 #version 300 es
 precision mediump float;
 
-uniform sampler2D render;
+uniform sampler2D u_render;
 out vec4 color;
 
 void main()
 {
     ivec2 i = ivec2(gl_FragCoord.xy);
-    color = texelFetch(render, i, 0);
+    color = vec4(texelFetch(u_render, i, 0).rrr, 1); // TODO: Revert
 }
