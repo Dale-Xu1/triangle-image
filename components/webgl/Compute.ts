@@ -1,7 +1,7 @@
 import vertexSrc from "../compute/vertex.glsl"
 
 import Buffer from "./Buffer"
-import Program, { Shader } from "./Program"
+import Program, { FrameBuffer, Shader } from "./Program"
 import Texture from "./Texture"
 import Vector2 from "./math/Vector2"
 
@@ -20,12 +20,13 @@ export default class Compute
 
 
     private readonly program: Program
+    private readonly frame: FrameBuffer
 
     private readonly width: number
     private readonly height: number
 
 
-    public constructor(private readonly gl: WebGL2RenderingContext, fragmentSrc: string, texture: Texture | null = null)
+    public constructor(private readonly gl: WebGL2RenderingContext, fragmentSrc: string, texture: Texture)
     {
         // Compile shaders
         const vertex = new Shader(gl, gl.VERTEX_SHADER, vertexSrc)
@@ -44,7 +45,8 @@ export default class Compute
         vertices.write(gl.STATIC_DRAW, Compute.VERTICES)
 
         // Attach texture to be rendered to
-        if (texture !== null) this.program.attachTexture(texture)
+        this.frame = new FrameBuffer(gl)
+        this.frame.attachTexture(texture)
     }
 
 
@@ -63,7 +65,9 @@ export default class Compute
     public run(): void
     {
         const gl = this.gl
+
         this.program.use()
+        this.frame.bind()
 
         gl.viewport(0, 0, this.width, this.height)
         gl.drawArrays(gl.TRIANGLES, 0, 6)

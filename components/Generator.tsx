@@ -8,6 +8,9 @@ import Texture from "./webgl/Texture"
 export default class Generator extends Component
 {
 
+    private static readonly BATCH_SIZE = 3;    
+
+
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private readonly target = React.createRef<HTMLImageElement>()
 
@@ -34,21 +37,46 @@ export default class Generator extends Component
         this.comparer = new Comparer(gl, target, result)
 
         this.renderer.attachTexture(result)
+
+        // Calculate initial error of image
+        this.image.error = this.error()
         this.draw()
     }
 
     private draw(): void
     {
-        // window.requestAnimationFrame(this.draw.bind(this))
+        window.requestAnimationFrame(this.draw.bind(this))
 
-        // for (let i = 0; i < 3; i++)
-        // {
-            this.renderer.render(this.image)
-            const difference = this.comparer.compare()
+        // Select triangle to mutate
+        const index = this.image.select()
 
-            console.log(difference)
-        // }
+        const triangle = this.image.triangles[index]
+        let next = triangle
+
+        for (let i = 0; i < Generator.BATCH_SIZE; i++)
+        {
+            // Mutate and compare triangle
+            const mutated = triangle.mutate(this.image.width, this.image.height)
+            this.image.triangles[index] = mutated
+
+            const error = this.error()
+            if (error < this.image.error)
+            {
+                next = mutated
+                this.image.error = error
+            }
+        }
+
+        this.image.triangles[index] = next
+        this.renderer.render(this.image, true)
     }
+
+    private error(): number
+    {
+        this.renderer.render(this.image)
+        return this.comparer.compare()
+    }
+
 
     public render(): ReactElement
     {

@@ -4,13 +4,14 @@ import fragmentSrc from "./shader/fragment.glsl"
 import Image from "./triangle/Image"
 import Buffer from "./webgl/Buffer"
 import Matrix3 from "./webgl/math/Matrix3"
-import Program, { Shader } from "./webgl/Program"
+import Program, { FrameBuffer, Shader } from "./webgl/Program"
 import Texture from "./webgl/Texture"
 
 export default class Renderer
 {
 
     private readonly program: Program
+    private readonly frame: FrameBuffer
 
     private readonly width: number
     private readonly height: number
@@ -32,6 +33,7 @@ export default class Renderer
         const fragment = new Shader(gl, gl.FRAGMENT_SHADER, fragmentSrc)
 
         this.program = new Program(gl, vertex, fragment)
+        this.frame = new FrameBuffer(gl)
 
         // Initialize projection matrix
         const matrix = this.program.uniformLocation("u_matrix")
@@ -50,13 +52,16 @@ export default class Renderer
 
     public attachTexture(texture: Texture): void
     {
-        this.program.attachTexture(texture)
+        this.frame.attachTexture(texture)
     }
 
-    public render(image: Image): void
+    public render(image: Image, display = false): void
     {
         const gl = this.gl
         this.program.use()
+
+        if (display) gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        else this.frame.bind()
 
         gl.viewport(0, 0, this.width, this.height)
         gl.enable(gl.BLEND)

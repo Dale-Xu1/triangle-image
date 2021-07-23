@@ -5,9 +5,7 @@ export default class Program
 {
 
     private readonly program: WebGLProgram
-
     private readonly array: VertexArray
-    private frame: FrameBuffer | null = null
 
 
     public constructor(private readonly gl: WebGL2RenderingContext, vertex: Shader, fragment: Shader)
@@ -38,10 +36,6 @@ export default class Program
 
         gl.useProgram(this.program)
         this.array.bind()
-
-        // Bind to canvas if no frame buffer was supplied
-        if (this.frame === null) gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-        else this.frame.bind()
     }
 
 
@@ -57,15 +51,6 @@ export default class Program
     public uniformLocation(name: string): WebGLUniformLocation
     {
         return this.gl.getUniformLocation(this.program, name)!
-    }
-
-    public attachTexture(texture: Texture): void
-    {
-        // Create frame buffer if one doesn't exist
-        if (this.frame === null) this.frame = new FrameBuffer(this.gl)
-
-        texture.write(null)
-        this.frame.attachTexture(texture)
     }
 
 }
@@ -96,6 +81,7 @@ export class FrameBuffer
         texture.bind()
 
         // Attach texture to frame buffer
+        texture.write(null)
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.texture, 0)
     }
 

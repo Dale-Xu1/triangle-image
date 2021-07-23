@@ -26,8 +26,6 @@ export default class Comparer
     private readonly sum: Compute
     private readonly average: Compute
 
-    private readonly render: Compute
-
 
     public constructor(private readonly gl: WebGL2RenderingContext, image: HTMLImageElement, input: Texture)
     {
@@ -62,10 +60,6 @@ export default class Comparer
 
         this.average.uniformTexture("u_difference", sum)
         gl.uniform1i(this.average.uniformLocation("u_width"), width)
-
-        // Render result so we can monitor it
-        this.render = new Compute(gl, renderSrc)
-        this.render.uniformTexture("u_render", input)
     }
 
 
@@ -83,7 +77,6 @@ export default class Comparer
         const result = new Float32Array(1)
         gl.readPixels(0, 0, 1, 1, gl.RED, gl.FLOAT, result)
 
-        this.render.run()
         return result[0]
     }
 

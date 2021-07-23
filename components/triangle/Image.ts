@@ -5,18 +5,19 @@ import Triangle from "./Triangle"
 export default class Image
 {
 
-    private readonly triangles: Triangle[] = []
+    public readonly triangles: Triangle[] = []
+    public error!: number
 
 
-    public constructor(private readonly width: number, private readonly height: number)
+    public constructor(public readonly width: number, public readonly height: number)
     {
-        for (let i = 0; i < 10; i++) this.addTriangle()
+        this.addTriangle()
     }
 
 
-    public mutate(): void
+    public select(): number
     {
-
+        return 0
     }
 
     public addTriangle(): void
