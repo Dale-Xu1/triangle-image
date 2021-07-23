@@ -1,7 +1,6 @@
 import differenceSrc from "./compute/difference.glsl"
 import sumSrc from "./compute/sum.glsl"
 import averageSrc from "./compute/average.glsl"
-import renderSrc from "./compute/render.glsl"
 
 import Compute from "./webgl/Compute"
 import Matrix3 from "./webgl/math/Matrix3"

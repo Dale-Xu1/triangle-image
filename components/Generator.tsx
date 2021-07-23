@@ -43,6 +43,7 @@ export default class Generator extends Component
         this.draw()
     }
 
+
     private draw(): void
     {
         window.requestAnimationFrame(this.draw.bind(this))
