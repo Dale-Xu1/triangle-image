@@ -15,7 +15,6 @@ export default class Comparer
         2,  0, -2,
         1,  0, -1
     ])
-
     private static readonly SOBEL_Y = new Matrix3([
         1,  2,  1,
         0,  0,  0,

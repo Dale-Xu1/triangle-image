@@ -46,7 +46,7 @@ export default class Texture
             case gl.RGB8: case gl.RGB32F: return gl.RGB
             case gl.RGBA8: case gl.RGBA32F: return gl.RGBA
         }
-        
+
         throw new Error(`Invalid format: ${format}`)
     }
 
@@ -59,7 +59,7 @@ export default class Texture
             case gl.R8: case gl.RG8: case gl.RGB8: case gl.RGBA8: return gl.UNSIGNED_BYTE
             case gl.R32F: case gl.RG32F: case gl.RGB32F: case gl.RGBA32F: return gl.FLOAT
         }
-        
+
         throw new Error(`Invalid format: ${format}`)
     }
 

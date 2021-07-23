@@ -75,7 +75,7 @@ export default class Matrix3
         return this.mult(Matrix3.rotation(a))
     }
 
-    public scale (x: number, y: number)
+    public scale(x: number, y: number)
     {
         return this.mult(Matrix3.scale(x, y))
     }

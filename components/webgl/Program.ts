@@ -27,7 +27,7 @@ export default class Program
 
             throw log
         }
-        
+
         this.use()
     }
 
@@ -58,7 +58,7 @@ export default class Program
     {
         return this.gl.getUniformLocation(this.program, name)!
     }
- 
+
     public attachTexture(texture: Texture): void
     {
         // Create frame buffer if one doesn't exist

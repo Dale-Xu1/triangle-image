@@ -6,19 +6,19 @@ import Buffer from "./webgl/Buffer"
 import Matrix3 from "./webgl/math/Matrix3"
 import Program, { Shader } from "./webgl/Program"
 import Texture from "./webgl/Texture"
- 
+
 export default class Renderer
 {
 
     private readonly program: Program
-    
+
     private readonly width: number
     private readonly height: number
 
     private readonly vertices: Buffer
     private readonly colors: Buffer
 
-    
+
     public constructor(private gl: WebGL2RenderingContext)
     {
         this.width = gl.canvas.width

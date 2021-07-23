@@ -68,5 +68,5 @@ export default class Compute
         gl.viewport(0, 0, this.width, this.height)
         gl.drawArrays(gl.TRIANGLES, 0, 6)
     }
-    
+
 }

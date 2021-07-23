@@ -14,6 +14,11 @@ export default class Image
     }
 
 
+    public mutate(): void
+    {
+
+    }
+
     public addTriangle(): void
     {
         this.triangles.push(Triangle.random(this.width, this.height))

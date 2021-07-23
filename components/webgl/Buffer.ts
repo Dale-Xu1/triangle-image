@@ -83,5 +83,5 @@ export class VertexArray
         gl.enableVertexAttribArray(attribute)
         gl.vertexAttribPointer(attribute, buffer.length, buffer.type, buffer.normalized, 0, 0)
     }
-    
+
 }
