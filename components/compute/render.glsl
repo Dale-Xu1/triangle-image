@@ -7,5 +7,5 @@ out vec4 color;
 void main()
 {
     ivec2 i = ivec2(gl_FragCoord.xy);
-    color = vec4(texelFetch(u_render, i, 0).rrr, 1); // TODO: Revert
+    color = texelFetch(u_render, i, 0);
 }

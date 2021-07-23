@@ -2,8 +2,8 @@
 
 module.exports = async function (source)
 {
-    let loader = this
-    let callback = loader.async()
+    const loader = this
+    const callback = loader.async()
 
     function resolve(path)
     {
@@ -20,14 +20,14 @@ module.exports = async function (source)
     async function process(source)
     {
         // Find include statements
-        let matches = source.matchAll(/#include "([.\/\w_-]+)"/g)
-        for (let match of matches)
+        const matches = source.matchAll(/#include "([.\/\w_-]+)"/g)
+        for (const match of matches)
         {
-            let statement = match[0]
-            let path = await resolve(match[1])
+            const statement = match[0]
+            const path = await resolve(match[1])
 
             // Read and process file contents
-            let content = await readFile(path)
+            const content = await readFile(path)
             content = await process(content)
 
             // Replace include statement with processed content

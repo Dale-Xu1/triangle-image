@@ -10,13 +10,13 @@ import Texture from "./webgl/Texture"
 export default class Comparer
 {
 
-    private static readonly sobelX = new Matrix3([
+    private static readonly SOBEL_X = new Matrix3([
         1,  0, -1,
         2,  0, -2,
         1,  0, -1
     ])
 
-    private static readonly sobelY = new Matrix3([
+    private static readonly SOBEL_Y = new Matrix3([
         1,  2,  1,
         0,  0,  0,
        -1, -2, -1
@@ -47,8 +47,8 @@ export default class Comparer
 
         gl.uniform2i(this.difference.uniformLocation("u_resolution"), width, height)
 
-        gl.uniform1fv(this.difference.uniformLocation("u_sobelX"), Comparer.sobelX.data)
-        gl.uniform1fv(this.difference.uniformLocation("u_sobelY"), Comparer.sobelY.data)
+        gl.uniform1fv(this.difference.uniformLocation("u_sobelX"), Comparer.SOBEL_X.data)
+        gl.uniform1fv(this.difference.uniformLocation("u_sobelY"), Comparer.SOBEL_Y.data)
 
         // Sum columns
         const sum = new Texture(gl, gl.R32F, width, 1)
@@ -66,7 +66,7 @@ export default class Comparer
 
         // Render result so we can monitor it
         this.render = new Compute(gl, renderSrc)
-        this.render.uniformTexture("u_render", difference)
+        this.render.uniformTexture("u_render", input)
     }
 
 

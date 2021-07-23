@@ -2,7 +2,7 @@ import vertexSrc from "./shader/vertex.glsl"
 import fragmentSrc from "./shader/fragment.glsl"
 
 import Buffer from "./webgl/Buffer"
-import Color from "./webgl/math/Color"
+import Color4 from "./webgl/math/Color4"
 import Matrix3 from "./webgl/math/Matrix3"
 import Vector2 from "./webgl/math/Vector2"
 import Program, { Shader } from "./webgl/Program"
@@ -75,12 +75,12 @@ export default class Renderer
             new Vector2(this.width, this.height)
         ])
         this.colors.write(gl.STATIC_DRAW, [
-            new Color(255, 0, 0, 200),
-            new Color(0, 255, 0, 200),
-            new Color(0, 0, 255, 200),
-            new Color(255, 255, 0, 100),
-            new Color(0, 255, 255, 100),
-            new Color(255, 0, 255, 100)
+            new Color4(255, 0, 0, 200),
+            new Color4(0, 255, 0, 200),
+            new Color4(0, 0, 255, 200),
+            new Color4(255, 255, 0, 100),
+            new Color4(0, 255, 255, 100),
+            new Color4(255, 0, 255, 100)
         ])
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)

@@ -8,7 +8,7 @@ import Vector2 from "./math/Vector2"
 export default class Compute
 {
 
-    private static readonly vertices =
+    private static readonly VERTICES =
     [
         new Vector2(-1, -1),
         new Vector2( 1, -1),
@@ -17,6 +17,7 @@ export default class Compute
         new Vector2( 1, -1),
         new Vector2( 1,  1),
     ]
+
 
     private readonly program: Program
 
@@ -40,7 +41,7 @@ export default class Compute
         const vertices = new Buffer(gl, gl.FLOAT, 2)
         this.program.bindAttribute("position", vertices)
 
-        vertices.write(gl.STATIC_DRAW, Compute.vertices)
+        vertices.write(gl.STATIC_DRAW, Compute.VERTICES)
 
         // Attach texture to be rendered to
         if (texture !== null) this.program.attachTexture(texture)
