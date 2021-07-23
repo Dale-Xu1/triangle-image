@@ -1,10 +1,9 @@
 import vertexSrc from "./shader/vertex.glsl"
 import fragmentSrc from "./shader/fragment.glsl"
 
+import Image from "./triangle/Image"
 import Buffer from "./webgl/Buffer"
-import Color4 from "./webgl/math/Color4"
 import Matrix3 from "./webgl/math/Matrix3"
-import Vector2 from "./webgl/math/Vector2"
 import Program, { Shader } from "./webgl/Program"
 import Texture from "./webgl/Texture"
  
@@ -54,7 +53,7 @@ export default class Renderer
         this.program.attachTexture(texture)
     }
 
-    public render(): void
+    public render(image: Image): void
     {
         const gl = this.gl
         this.program.use()
@@ -66,24 +65,12 @@ export default class Renderer
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
 
-        this.vertices.write(gl.STATIC_DRAW, [
-            new Vector2(0, 0),
-            new Vector2(this.width, 0),
-            new Vector2(0, this.height),
-            new Vector2(0, 0),
-            new Vector2(this.width, 0),
-            new Vector2(this.width, this.height)
-        ])
-        this.colors.write(gl.STATIC_DRAW, [
-            new Color4(255, 0, 0, 200),
-            new Color4(0, 255, 0, 200),
-            new Color4(0, 0, 255, 200),
-            new Color4(255, 255, 0, 100),
-            new Color4(0, 255, 255, 100),
-            new Color4(255, 0, 255, 100)
-        ])
+        const points = image.getPoints()
 
-        gl.drawArrays(gl.TRIANGLES, 0, 6)
+        this.vertices.write(gl.STATIC_DRAW, points)
+        this.colors.write(gl.STATIC_DRAW, image.getColors())
+
+        gl.drawArrays(gl.TRIANGLES, 0, points.length)
     }
 
 }

@@ -22,13 +22,13 @@ export default class Generator extends Component
         const canvas = this.canvas.current!
         const target = this.target.current!
 
-        canvas.width = target.width
-        canvas.height = target.height
+        const width = canvas.width = target.width
+        const height = canvas.height = target.height
 
-        this.image = new Image()
+        this.image = new Image(width, height)
 
         const gl = canvas.getContext("webgl2")!
-        const result = new Texture(gl, gl.RGBA8, canvas.width, canvas.height)
+        const result = new Texture(gl, gl.RGBA8, width, height)
 
         this.renderer = new Renderer(gl)
         this.comparer = new Comparer(gl, target, result)
@@ -43,7 +43,7 @@ export default class Generator extends Component
 
         // for (let i = 0; i < 3; i++)
         // {
-            this.renderer.render()
+            this.renderer.render(this.image)
             const difference = this.comparer.compare()
 
             console.log(difference)
