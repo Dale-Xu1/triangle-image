@@ -1,4 +1,5 @@
 "use strict"
+const fs = require("fs")
 
 module.exports = async function (source)
 {
@@ -27,7 +28,7 @@ module.exports = async function (source)
             const path = await resolve(match[1])
 
             // Read and process file contents
-            const content = await readFile(path)
+            let content = await readFile(path)
             content = await process(content)
 
             // Replace include statement with processed content

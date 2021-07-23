@@ -35,8 +35,8 @@ export default class Compute
         this.program = new Program(gl, vertex, fragment)
 
         // Get result dimensions
-        this.width = texture === null ? gl.canvas.width : texture.width // No texture means we're rendering to the canvas
-        this.height = texture === null ? gl.canvas.height : texture.height
+        this.width = texture.width
+        this.height = texture.height
 
         // Write quad to position attribute
         const vertices = new Buffer(gl, gl.FLOAT, 2)

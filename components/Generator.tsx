@@ -8,7 +8,7 @@ import Texture from "./webgl/Texture"
 export default class Generator extends Component
 {
 
-    private static readonly BATCH_SIZE = 3;    
+    private static readonly BATCH_SIZE = 5;    
 
 
     private readonly canvas = React.createRef<HTMLCanvasElement>()

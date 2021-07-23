@@ -1,5 +1,6 @@
 import Color from "./math/Color"
 import Point from "./math/Point"
+import Random from "./math/Random"
 import Triangle from "./Triangle"
 
 export default class Image
