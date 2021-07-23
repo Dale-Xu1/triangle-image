@@ -78,7 +78,7 @@ void main()
 
     // Calculate difference in colors and edges
     vec3 c = a - b;
-    vec3 s = (d - t) * 0.4;
+    vec3 s = d - t;
 
     // Average color channels
     vec3 diff = c * c + s * s;

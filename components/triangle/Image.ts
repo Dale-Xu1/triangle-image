@@ -6,6 +6,9 @@ import Triangle from "./Triangle"
 export default class Image
 {
 
+    private static readonly INTERCEPT = 0.6 // Lower values result in more recently added triangles being picked more often
+
+
     public readonly triangles: Triangle[] = []
     public error!: number
 
@@ -18,7 +21,11 @@ export default class Image
 
     public select(): number
     {
-        return 0
+        // Fancy math stuff to select newer triangles
+        const length = this.triangles.length
+        const random = Image.INTERCEPT / Random.next() % length
+
+        return length - 1 - Math.floor(random)
     }
 
     public addTriangle(): void
