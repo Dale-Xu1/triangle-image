@@ -2,17 +2,17 @@
 precision mediump float;
 
 #include "kernal.glsl"
-#define EDGE_FACTOR 0.1
+#define EDGE_FACTOR 0.15
 
 uniform sampler2D u_data;
 uniform sampler2D u_target;
 
-uniform float[KERNAL_SIZE] u_sobelX;
-uniform float[KERNAL_SIZE] u_sobelY;
+uniform KERNAL u_sobelX;
+uniform KERNAL u_sobelY;
 
 out float color;
 
-vec3 sobel(vec3[KERNAL_SIZE] data)
+vec3 sobel(DATA data)
 {
     vec3 x = convolution(u_sobelX, data);
     vec3 y = convolution(u_sobelY, data);
@@ -25,8 +25,8 @@ void main()
 {
     ivec2 i = ivec2(gl_FragCoord.xy);
 
-    vec3[] data = getData(u_data, i);
-    vec3[] target = getData(u_target, i);
+    DATA data = getData(u_data, i);
+    DATA target = getData(u_target, i);
 
     vec3 a = data[4]; // Index 4 is the middle pixel
     vec3 b = target[4];

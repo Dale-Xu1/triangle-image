@@ -1,4 +1,6 @@
 #define KERNAL_SIZE 9
+#define KERNAL float[KERNAL_SIZE]
+#define DATA vec3[KERNAL_SIZE]
 
 uniform ivec2 u_resolution;
 
@@ -16,7 +18,7 @@ vec3 getPixel(sampler2D data, int i, int j)
     return value.rgb + (1.0 - value.a);
 }
 
-vec3[KERNAL_SIZE] getData(sampler2D data, ivec2 location)
+DATA getData(sampler2D data, ivec2 location)
 {
     int i = location.x;
     int j = location.y;
@@ -34,7 +36,7 @@ vec3[KERNAL_SIZE] getData(sampler2D data, ivec2 location)
     );
 }
 
-vec3 convolution(float[KERNAL_SIZE] kernal, vec3[KERNAL_SIZE] data)
+vec3 convolution(KERNAL kernal, DATA data)
 {
     // Performs a convolution, what more can I say?
     vec3 sum;
@@ -43,7 +45,7 @@ vec3 convolution(float[KERNAL_SIZE] kernal, vec3[KERNAL_SIZE] data)
     return sum;
 }
 
-vec3 convolution(float[KERNAL_SIZE] kernal, float weight, vec3[KERNAL_SIZE] data)
+vec3 convolution(KERNAL kernal, float weight, DATA data)
 {
     return convolution(kernal, data) / weight;
 }
