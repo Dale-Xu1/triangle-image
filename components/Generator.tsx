@@ -45,6 +45,18 @@ export default class Generator extends Component
         this.draw()
     }
 
+    private addTriangle(): void
+    {
+        this.image.addTriangle()
+        this.image.error = this.compare()
+    }
+
+    private compare(): number
+    {
+        this.renderer.render(this.image)
+        return this.comparer.compare()
+    }
+
 
     private error = 1 // Error should never exceed 1 anyways
 
@@ -55,6 +67,14 @@ export default class Generator extends Component
     {
         window.requestAnimationFrame(this.draw.bind(this))
 
+        this.mutate()
+        this.trackIterations()
+
+        this.renderer.render(this.image, true)
+    }
+
+    private mutate(): void
+    {
         // Select triangle to mutate
         const index = this.image.select()
 
@@ -74,8 +94,12 @@ export default class Generator extends Component
                 this.image.error = error
             }
         }
-        this.image.triangles[index] = next
 
+        this.image.triangles[index] = next
+    }
+
+    private trackIterations(): void
+    {
         // Run a few more iterations once image with new triangle is better than without
         if (this.image.error < this.error)
         {
@@ -98,20 +122,6 @@ export default class Generator extends Component
             this.image.resetTriangle()
             this.image.error = this.compare()
         }
-
-        this.renderer.render(this.image, true)
-    }
-
-    private addTriangle(): void
-    {
-        this.image.addTriangle()
-        this.image.error = this.compare()
-    }
-
-    private compare(): number
-    {
-        this.renderer.render(this.image)
-        return this.comparer.compare()
     }
 
 
