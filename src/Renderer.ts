@@ -55,7 +55,7 @@ export default class Renderer
         this.frame.attachTexture(texture)
     }
 
-    public render(image: Image, display = false): void
+    public render(image: Image, display: boolean = false): void
     {
         const gl = this.gl
         this.program.use()

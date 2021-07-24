@@ -12,7 +12,7 @@ export default class Generator
     private static readonly MAX_ITERATIONS: number = 1000;
 
 
-    private readonly image: Image
+    public readonly image: Image
 
     private readonly renderer: Renderer
     private readonly comparer: Comparer

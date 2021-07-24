@@ -3,7 +3,7 @@ export default class Random
 
     public static readonly RESET: number = 0.05
 
-    public static next(range = 1): number
+    public static next(range: number = 1): number
     {
         return Math.random() * range
     }

@@ -13,7 +13,7 @@ export default class Color extends Color4
 
 
     public constructor(public readonly r: number, public readonly g: number, public readonly b: number,
-        public readonly a = 255)
+        public readonly a: number = 255)
     {
         super(r, g, b, a)
     }

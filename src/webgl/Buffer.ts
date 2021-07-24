@@ -7,7 +7,7 @@ export default class Buffer
 
 
     public constructor(private readonly gl: WebGL2RenderingContext,
-        public readonly type: number, public readonly length: number, public readonly normalized = true)
+        public readonly type: number, public readonly length: number, public readonly normalized: boolean = true)
     {
         this.buffer = gl.createBuffer()!
     }
