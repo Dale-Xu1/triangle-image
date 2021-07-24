@@ -1,60 +1,16 @@
 #version 300 es
-
-#define KERNAL_SIZE 9
-#define EDGE_FACTOR 0.1
-
 precision mediump float;
+
+#include "kernal.glsl"
+#define EDGE_FACTOR 0.1
 
 uniform sampler2D u_data;
 uniform sampler2D u_target;
-
-uniform ivec2 u_resolution;
 
 uniform float[KERNAL_SIZE] u_sobelX;
 uniform float[KERNAL_SIZE] u_sobelY;
 
 out float color;
-
-vec3 getPixel(sampler2D data, int i, int j)
-{
-    // Constrain index
-    if (i < 0) i = 0;
-    else if (i >= u_resolution.x) i = u_resolution.x - 1;
-
-    if (j < 0) j = 0;
-    else if (j >= u_resolution.y) j = u_resolution.y - 1;
-
-    // Remove alpha channel assuming white background
-    vec4 value = texelFetch(data, ivec2(i, j), 0);
-    return value.rgb + (1.0 - value.a);
-}
-
-vec3[KERNAL_SIZE] getData(sampler2D data, ivec2 location)
-{
-    int i = location.x;
-    int j = location.y;
-
-    return vec3[](
-        getPixel(data, i - 1, j - 1),
-        getPixel(data, i    , j - 1),
-        getPixel(data, i + 1, j - 1),
-        getPixel(data, i - 1, j    ),
-        getPixel(data, i    , j    ),
-        getPixel(data, i + 1, j    ),
-        getPixel(data, i - 1, j + 1),
-        getPixel(data, i    , j + 1),
-        getPixel(data, i + 1, j + 1)
-    );
-}
-
-vec3 convolution(float[KERNAL_SIZE] kernal, vec3[KERNAL_SIZE] data)
-{
-    // Performs a convolution, what more can I say?
-    vec3 sum;
-    for (int i = 0; i < KERNAL_SIZE; i++) sum += data[i] * kernal[i];
-
-    return sum;
-}
 
 vec3 sobel(vec3[KERNAL_SIZE] data)
 {

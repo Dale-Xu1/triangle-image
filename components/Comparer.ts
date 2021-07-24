@@ -1,6 +1,7 @@
 import differenceSrc from "./compute/difference.glsl"
 import sumSrc from "./compute/sum.glsl"
 import averageSrc from "./compute/average.glsl"
+import blurSrc from "./compute/blur.glsl"
 
 import Compute from "./webgl/Compute"
 import Matrix3 from "./webgl/math/Matrix3"
@@ -8,6 +9,13 @@ import Texture from "./webgl/Texture"
 
 export default class Comparer
 {
+
+    private static readonly BLUR = new Matrix3([
+        1, 2, 1,
+        2, 4, 2,
+        1, 2, 1
+    ])
+    private static readonly BLUR_WEIGHT = 16
 
     private static readonly SOBEL_X = new Matrix3([
         1,  0, -1,
@@ -31,8 +39,7 @@ export default class Comparer
         const width = image.width
         const height = image.height
 
-        const target = new Texture(gl, gl.RGB8, width, height)
-        target.write(image)
+        const target = this.blur(image)
 
         // Calculate difference between rendered image and target
         const difference = new Texture(gl, gl.R32F, width, height)
@@ -59,6 +66,31 @@ export default class Comparer
 
         this.average.uniformTexture("u_difference", sum)
         gl.uniform1i(this.average.uniformLocation("u_width"), width)
+    }
+
+    private blur(image: HTMLImageElement): Texture
+    {
+        const gl = this.gl
+        
+        const width = image.width
+        const height = image.height
+
+        // Load image into texture
+        const texture = new Texture(gl, gl.RGB8, width, height)
+        texture.write(image)
+
+        const result = new Texture(gl, gl.RGB8, width, height)
+        const blur = new Compute(gl, blurSrc, result)
+
+        blur.uniformTexture("u_image", texture)
+        gl.uniform2i(blur.uniformLocation("u_resolution"), width, height)
+
+        gl.uniform1fv(blur.uniformLocation("u_blur"), Comparer.BLUR.data)
+        gl.uniform1f(blur.uniformLocation("u_weight"), Comparer.BLUR_WEIGHT)
+
+        // Blur image slightly
+        blur.run()
+        return result
     }
 
 
