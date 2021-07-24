@@ -1,7 +1,7 @@
 import Head from "next/head"
 import React, { Component, ReactElement } from "react"
 
-import Generator from "../components/Generator"
+import Generator from "../src/Generator"
 
 export default class Home extends Component
 {

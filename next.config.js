@@ -5,7 +5,7 @@ module.exports = {
     webpack: (config) => {
         config.module.rules.push({
             test: /\.glsl$/,
-            use: [{ loader: path.resolve("components/loader/loader.js") }]
+            use: [{ loader: path.resolve("src/loader/loader.js") }]
         })
         return config
     }
