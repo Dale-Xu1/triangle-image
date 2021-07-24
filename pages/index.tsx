@@ -10,6 +10,7 @@ export default class Home extends Component
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private readonly image = React.createRef<HTMLImageElement>()
 
+    public readonly link = React.createRef<HTMLAnchorElement>()
     private generator!: Generator
 
 
@@ -28,7 +29,10 @@ export default class Home extends Component
     private export(): void
     {
         const exporter = new Exporter(this.generator.image)
-        exporter.export()
+
+        // Point link to data URL; yeah, I don't get why downloading is done this way either
+        const link = this.link.current!
+        link.href = exporter.export(1920, 1080)
     }
 
 
@@ -42,7 +46,14 @@ export default class Home extends Component
 
                 <canvas ref={this.canvas} />
                 <img src="/forest.jpg" alt="" ref={this.image} />
-                <button onClick={this.export.bind(this)}>Export</button>
+                <a
+                    href="#"
+                    download="result.png"
+                    onClick={this.export.bind(this)}
+                    ref={this.link}
+                >
+                    Export
+                </a>
             </div>
         )
     }
