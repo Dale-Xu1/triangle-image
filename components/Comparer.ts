@@ -10,19 +10,19 @@ import Texture from "./webgl/Texture"
 export default class Comparer
 {
 
-    private static readonly BLUR = new Matrix3([
+    private static readonly BLUR: Matrix3 = new Matrix3([
         1, 2, 1,
         2, 4, 2,
         1, 2, 1
     ])
-    private static readonly BLUR_WEIGHT = 16
+    private static readonly BLUR_WEIGHT: number = 16
 
-    private static readonly SOBEL_X = new Matrix3([
+    private static readonly SOBEL_X: Matrix3 = new Matrix3([
         1,  0, -1,
         2,  0, -2,
         1,  0, -1
     ])
-    private static readonly SOBEL_Y = new Matrix3([
+    private static readonly SOBEL_Y: Matrix3 = new Matrix3([
         1,  2,  1,
         0,  0,  0,
        -1, -2, -1

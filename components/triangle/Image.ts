@@ -6,7 +6,7 @@ import Triangle from "./Triangle"
 export default class Image
 {
 
-    private static readonly INTERCEPT = 0.4 // Lower values result in more recently added triangles being picked more often
+    private static readonly INTERCEPT: number = 0.4 // Lower values result in more recently added triangles being picked more often
 
 
     public readonly triangles: Triangle[] = []

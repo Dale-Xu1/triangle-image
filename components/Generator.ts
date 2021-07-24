@@ -1,48 +1,38 @@
-import React, { Component, ReactElement } from "react"
-
 import Comparer from "./Comparer"
 import Renderer from "./Renderer"
 import Image from "./triangle/Image"
 import Texture from "./webgl/Texture"
 
-export default class Generator extends Component
+export default class Generator
 {
 
-    private static readonly BATCH_SIZE = 5;
+    private static readonly BATCH_SIZE: number = 5;
 
-    private static readonly ITERATIONS = 200;
-    private static readonly MAX_ITERATIONS = 1000;
-
-
-    private readonly canvas = React.createRef<HTMLCanvasElement>()
-    private readonly target = React.createRef<HTMLImageElement>()
-
-    private image!: Image
-
-    private renderer!: Renderer
-    private comparer!: Comparer
+    private static readonly ITERATIONS: number = 200;
+    private static readonly MAX_ITERATIONS: number = 1000;
 
 
-    public componentDidMount(): void
+    private readonly image: Image
+
+    private readonly renderer: Renderer
+    private readonly comparer: Comparer
+
+
+    public constructor(canvas: HTMLCanvasElement, image: HTMLImageElement)
     {
-        const canvas = this.canvas.current!
-        const target = this.target.current!
-
-        const width = canvas.width = target.width
-        const height = canvas.height = target.height
+        const width = canvas.width
+        const height = canvas.height
 
         const gl = canvas.getContext("webgl2")!
         const result = new Texture(gl, gl.RGBA8, width, height)
 
         this.renderer = new Renderer(gl)
-        this.comparer = new Comparer(gl, target, result)
+        this.comparer = new Comparer(gl, image, result)
 
         this.renderer.attachTexture(result)
 
         this.image = new Image(width, height)
         this.addTriangle()
-
-        this.draw()
     }
 
     private addTriangle(): void
@@ -58,14 +48,14 @@ export default class Generator extends Component
     }
 
 
-    private error = 1 // Error should never exceed 1 anyways
+    private error: number = 1 // Error should never exceed 1 anyways
 
-    private iterations = 0
-    private remaining = 0
+    private iterations: number = 0
+    private remaining: number = 0
 
-    private draw(): void
+    public run(): void
     {
-        window.requestAnimationFrame(this.draw.bind(this))
+        window.requestAnimationFrame(this.run.bind(this))
 
         this.mutate()
         this.trackIterations()
@@ -122,17 +112,6 @@ export default class Generator extends Component
             this.image.resetTriangle()
             this.image.error = this.compare()
         }
-    }
-
-
-    public render(): ReactElement
-    {
-        return (
-            <div>
-                <canvas ref={this.canvas} />
-                <img src="/forest.jpg" alt="" ref={this.target} />
-            </div>
-        )
     }
 
 }

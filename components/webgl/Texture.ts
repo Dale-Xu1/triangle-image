@@ -1,7 +1,7 @@
 export default class Texture
 {
 
-    private static index = 0
+    private static index: number = 0
 
 
     public readonly texture: WebGLTexture

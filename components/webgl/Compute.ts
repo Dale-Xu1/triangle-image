@@ -8,7 +8,7 @@ import Vector2 from "./math/Vector2"
 export default class Compute
 {
 
-    private static readonly VERTICES =
+    private static readonly VERTICES: Vector2[] =
     [
         new Vector2(-1, -1),
         new Vector2( 1, -1),

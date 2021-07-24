@@ -1,7 +1,7 @@
 export default class Random
 {
 
-    public static readonly RESET = 0.05
+    public static readonly RESET: number = 0.05
 
     public static next(range = 1): number
     {
@@ -10,6 +10,7 @@ export default class Random
 
 
     private static nextGaussian: number | null = null
+
     public static gaussian(): number
     {
         if (this.nextGaussian !== null)

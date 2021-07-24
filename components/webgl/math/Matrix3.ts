@@ -1,7 +1,7 @@
 export default class Matrix3
 {
 
-    public static readonly IDENTITY = new Matrix3([
+    public static readonly IDENTITY: Matrix3 = new Matrix3([
         1, 0, 0,
         0, 1, 0,
         0, 0, 1
