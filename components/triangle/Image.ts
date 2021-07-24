@@ -6,17 +6,14 @@ import Triangle from "./Triangle"
 export default class Image
 {
 
-    private static readonly INTERCEPT = 0.6 // Lower values result in more recently added triangles being picked more often
+    private static readonly INTERCEPT = 0.4 // Lower values result in more recently added triangles being picked more often
 
 
     public readonly triangles: Triangle[] = []
     public error!: number
 
 
-    public constructor(public readonly width: number, public readonly height: number)
-    {
-        this.addTriangle()
-    }
+    public constructor(public readonly width: number, public readonly height: number) { }
 
 
     public select(): number
@@ -31,6 +28,12 @@ export default class Image
     public addTriangle(): void
     {
         this.triangles.push(Triangle.random(this.width, this.height))
+    }
+
+    public resetTriangle(): void
+    {
+        let i = this.triangles.length - 1
+        this.triangles[i] = Triangle.random(this.width, this.height)
     }
 
 

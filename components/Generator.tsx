@@ -8,7 +8,10 @@ import Texture from "./webgl/Texture"
 export default class Generator extends Component
 {
 
-    private static readonly BATCH_SIZE = 5;    
+    private static readonly BATCH_SIZE = 5;
+
+    private static readonly ITERATIONS = 200;
+    private static readonly MAX_ITERATIONS = 1000;
 
 
     private readonly canvas = React.createRef<HTMLCanvasElement>()
@@ -28,8 +31,6 @@ export default class Generator extends Component
         const width = canvas.width = target.width
         const height = canvas.height = target.height
 
-        this.image = new Image(width, height)
-
         const gl = canvas.getContext("webgl2")!
         const result = new Texture(gl, gl.RGBA8, width, height)
 
@@ -38,11 +39,17 @@ export default class Generator extends Component
 
         this.renderer.attachTexture(result)
 
-        // Calculate initial error of image
-        this.image.error = this.error()
+        this.image = new Image(width, height)
+        this.addTriangle()
+
         this.draw()
     }
 
+
+    private error = 1 // Error should never exceed 1 anyways
+
+    private iterations = 0
+    private remaining = 0
 
     private draw(): void
     {
@@ -60,19 +67,48 @@ export default class Generator extends Component
             const mutated = triangle.mutate(this.image.width, this.image.height)
             this.image.triangles[index] = mutated
 
-            const error = this.error()
+            const error = this.compare()
             if (error < this.image.error)
             {
                 next = mutated
                 this.image.error = error
             }
         }
-
         this.image.triangles[index] = next
+
+        // Run a few more iterations once image with new triangle is better than without
+        if (this.image.error < this.error)
+        {
+            this.remaining++
+            if (this.remaining > Generator.ITERATIONS)
+            {
+                this.error = this.image.error
+
+                this.iterations = 0
+                this.remaining = 0
+
+                this.addTriangle()
+            }
+        }
+        else if (++this.iterations > Generator.MAX_ITERATIONS)
+        {
+            // We've reached a local minimum that doesn't improve the image
+            this.iterations = 0
+
+            this.image.resetTriangle()
+            this.image.error = this.compare()
+        }
+
         this.renderer.render(this.image, true)
     }
 
-    private error(): number
+    private addTriangle(): void
+    {
+        this.image.addTriangle()
+        this.image.error = this.compare()
+    }
+
+    private compare(): number
     {
         this.renderer.render(this.image)
         return this.comparer.compare()

@@ -1,5 +1,7 @@
 #version 300 es
+
 #define KERNAL_SIZE 9
+#define EDGE_FACTOR 0.1
 
 precision mediump float;
 
@@ -78,7 +80,7 @@ void main()
 
     // Calculate difference in colors and edges
     vec3 c = a - b;
-    vec3 s = d - t;
+    vec3 s = (d - t) * EDGE_FACTOR;
 
     // Average color channels
     vec3 diff = c * c + s * s;
