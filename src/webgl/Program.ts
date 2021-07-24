@@ -95,7 +95,7 @@ export class Shader
 
     public constructor(gl: WebGL2RenderingContext, type: number, source: string)
     {
-        this.shader = gl.createShader(type)!;
+        this.shader = gl.createShader(type)!
 
         gl.shaderSource(this.shader, source)
         gl.compileShader(this.shader)

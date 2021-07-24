@@ -22,15 +22,15 @@ export default class Random
         }
         else
         {
-            let v1, v2, s;
+            let v1, v2, s
             do
             {
                 v1 = this.next(2) - 1
                 v2 = this.next(2) - 1
 
-                s = v1 ** 2 + v2 ** 2;
+                s = v1 ** 2 + v2 ** 2
             }
-            while (s >= 1 || s == 0);
+            while (s >= 1 || s == 0)
 
             const mult = Math.sqrt(-2 * Math.log(s) / s)
             this.nextGaussian = v2 * mult

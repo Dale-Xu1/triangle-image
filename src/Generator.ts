@@ -6,10 +6,10 @@ import Texture from "./webgl/Texture"
 export default class Generator
 {
 
-    private static readonly BATCH_SIZE: number = 5;
+    private static readonly BATCH_SIZE: number = 5
 
-    private static readonly ITERATIONS: number = 200;
-    private static readonly MAX_ITERATIONS: number = 1000;
+    private static readonly ITERATIONS: number = 200
+    private static readonly MAX_ITERATIONS: number = 1000
 
 
     public readonly image: Image

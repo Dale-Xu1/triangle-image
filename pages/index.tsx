@@ -1,6 +1,7 @@
 import Head from "next/head"
 import React, { Component, ReactElement } from "react"
 
+import Exporter from "../src/Exporter"
 import Generator from "../src/Generator"
 
 export default class Home extends Component
@@ -8,6 +9,8 @@ export default class Home extends Component
 
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private readonly image = React.createRef<HTMLImageElement>()
+
+    private generator!: Generator
 
 
     public componentDidMount(): void
@@ -18,9 +21,16 @@ export default class Home extends Component
         canvas.width = image.width
         canvas.height = image.height
 
-        const generator = new Generator(canvas, image)
-        generator.run()
+        this.generator = new Generator(canvas, image)
+        this.generator.run()
     }
+
+    private export(): void
+    {
+        const exporter = new Exporter(this.generator.image)
+        exporter.export()
+    }
+
 
     public render(): ReactElement
     {
@@ -29,9 +39,10 @@ export default class Home extends Component
                 <Head>
                     <title>Triangle Image</title>
                 </Head>
+
                 <canvas ref={this.canvas} />
                 <img src="/forest.jpg" alt="" ref={this.image} />
-                <button>Save</button>
+                <button onClick={this.export.bind(this)}>Export</button>
             </div>
         )
     }

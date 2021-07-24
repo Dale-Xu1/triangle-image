@@ -4,7 +4,7 @@ import Random from "./Random"
 export default class Color extends Color4
 {
 
-    private static readonly EPSILON: number = 1e-13;
+    private static readonly EPSILON: number = 1e-13
 
     public static random(): Color
     {
