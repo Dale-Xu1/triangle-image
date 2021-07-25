@@ -48,20 +48,27 @@ export default class Generator
     }
 
 
-    private error: number = 1 // Error should never exceed 1 anyways
-
-    private eden: boolean = true
-    private iterations: number = 0
-
+    private handler!: number
     public run(): void
     {
-        window.requestAnimationFrame(this.run.bind(this))
+        this.handler = window.requestAnimationFrame(this.run.bind(this))
 
         this.mutate()
         this.trackIterations()
 
         this.renderer.render(this.image, true)
     }
+
+    public stop(): void
+    {
+        window.cancelAnimationFrame(this.handler)
+    }
+
+
+    private error!: number
+
+    private eden: boolean = false
+    private iterations: number = 0
 
     private mutate(): void
     {
@@ -111,6 +118,7 @@ export default class Generator
             this.eden = true
             this.iterations = 0
 
+            console.log("Triangles:", this.image.triangles.length, "Error:", this.error)
             this.addTriangle()
         }
     }

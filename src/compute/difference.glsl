@@ -40,5 +40,5 @@ void main()
 
     // Average color channels
     vec3 diff = c * c + s * s;
-    color = (diff.r + diff.g + diff.b) / 3.0;
+    color = diff.r + diff.g + diff.b;
 }

@@ -35,6 +35,7 @@ export default class Home extends Component<object, State>
         super(props)
 
         this.export = this.export.bind(this)
+
         this.updateWidth = this.updateWidth.bind(this)
         this.updateHeight = this.updateHeight.bind(this)
     }
@@ -52,6 +53,12 @@ export default class Home extends Component<object, State>
         this.generator.run()
     }
 
+    public componentWillUnmount(): void
+    {
+        this.generator.stop()
+    }
+
+
     private export(): void
     {
         const exporter = new Exporter(this.generator.image)
@@ -60,7 +67,6 @@ export default class Home extends Component<object, State>
         const href = exporter.export(this.state.width, this.state.height)
         this.setState({ href })
     }
-
 
     public render(): ReactElement
     {
