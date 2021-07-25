@@ -10,7 +10,7 @@ export default class Home extends Component
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private readonly image = React.createRef<HTMLImageElement>()
 
-    public readonly link = React.createRef<HTMLAnchorElement>()
+    private readonly link = React.createRef<HTMLAnchorElement>()
     private generator!: Generator
 
 

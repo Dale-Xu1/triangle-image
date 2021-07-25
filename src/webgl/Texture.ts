@@ -18,7 +18,7 @@ export default class Texture
     }
 
 
-    public write(data: ArrayBufferView | HTMLImageElement | null = null): void
+    public write(data: ArrayBufferView | ImageData | HTMLImageElement | null = null): void // TODO: Remove HTMLImageElement
     {
         const gl = this.gl
         this.bind()

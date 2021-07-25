@@ -22,7 +22,7 @@ export default class Exporter
         c.scale(width / this.image.width, height / this.image.height)
 
         this.render(c)
-        return canvas.toDataURL("image/png")
+        return canvas.toDataURL()
     }
 
     private render(c: CanvasRenderingContext2D): void
@@ -35,7 +35,7 @@ export default class Exporter
             c.lineTo(triangle.c.x, triangle.c.y)
 
             const color = triangle.color
-            c.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 255})`
+            c.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 256})`
 
             c.fill()
         }
