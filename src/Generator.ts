@@ -50,8 +50,8 @@ export default class Generator
 
     private error: number = 1 // Error should never exceed 1 anyways
 
+    private eden: boolean = true
     private iterations: number = 0
-    private remaining: number = 0
 
     public run(): void
     {
@@ -90,27 +90,28 @@ export default class Generator
 
     private trackIterations(): void
     {
-        // Run a few more iterations once image with new triangle is better than without
-        if (this.image.error < this.error)
+        if (this.eden)
         {
-            this.remaining++
-            if (this.remaining > Generator.ITERATIONS)
+            // Leave Eden once image with new triangle is better than without
+            if (this.image.error < this.error) this.eden = false
+            else if (++this.iterations > Generator.MAX_ITERATIONS)
             {
-                this.error = this.image.error
-
-                this.iterations = 0
-                this.remaining = 0
-
-                this.addTriangle()
+                // We've reached a local minimum that doesn't improve the image
+                this.image.resetTriangle()
+                this.image.error = this.compare()
             }
+            else return
+
+            this.iterations = 0
         }
-        else if (++this.iterations > Generator.MAX_ITERATIONS)
+        else if (++this.iterations > Generator.ITERATIONS) // Remaining iterations to finalize triangle
         {
-            // We've reached a local minimum that doesn't improve the image
+            this.error = this.image.error
+
+            this.eden = true
             this.iterations = 0
 
-            this.image.resetTriangle()
-            this.image.error = this.compare()
+            this.addTriangle()
         }
     }
 

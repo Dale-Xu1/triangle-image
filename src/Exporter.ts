@@ -27,8 +27,11 @@ export default class Exporter
 
     private render(c: CanvasRenderingContext2D): void
     {
-        for (const triangle of this.image.triangles)
+        const triangles = this.image.triangles
+        for (let i = 0; i < triangles.length - 1; i++) // Ignore last triangle because it isn't necessarily finished
         {
+            const triangle = triangles[i]
+
             c.beginPath()
             c.moveTo(triangle.a.x, triangle.a.y)
             c.lineTo(triangle.b.x, triangle.b.y)

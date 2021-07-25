@@ -7,6 +7,8 @@ import Generator from "../src/Generator"
 interface State
 {
 
+    href: string
+
     width: number
     height: number
 
@@ -17,6 +19,7 @@ export default class Home extends Component<object, State>
 
     public state: State =
     {
+        href: "#",
         width: 1920,
         height: 1080
     }
@@ -24,8 +27,17 @@ export default class Home extends Component<object, State>
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private readonly image = React.createRef<HTMLImageElement>()
 
-    private readonly link = React.createRef<HTMLAnchorElement>()
     private generator!: Generator
+
+
+    public constructor(props: object)
+    {
+        super(props)
+
+        this.export = this.export.bind(this)
+        this.updateWidth = this.updateWidth.bind(this)
+        this.updateHeight = this.updateHeight.bind(this)
+    }
 
 
     public componentDidMount(): void
@@ -45,8 +57,8 @@ export default class Home extends Component<object, State>
         const exporter = new Exporter(this.generator.image)
 
         // Point link to data URL; yeah, I don't get why downloading is done this way either
-        const link = this.link.current!
-        link.href = exporter.export(this.state.width, this.state.height)
+        const href = exporter.export(this.state.width, this.state.height)
+        this.setState({ href })
     }
 
 
@@ -61,13 +73,12 @@ export default class Home extends Component<object, State>
                 <canvas ref={this.canvas} />
                 <img src="/forest.jpg" alt="" ref={this.image} />
 
-                <input type="number" value={this.state.width} onChange={this.updateWidth.bind(this)} />
-                <input type="number" value={this.state.height} onChange={this.updateHeight.bind(this)} />
+                <input type="number" value={this.state.width} onChange={this.updateWidth} />
+                <input type="number" value={this.state.height} onChange={this.updateHeight} />
                 <a
-                    href="#"
+                    href={this.state.href}
                     download="result.png"
-                    onClick={this.export.bind(this)}
-                    ref={this.link}
+                    onClick={this.export}
                 >
                     Export
                 </a>
