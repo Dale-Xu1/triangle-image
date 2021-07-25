@@ -1,72 +1,91 @@
 import Head from "next/head"
 import React, { ChangeEvent, Component, ReactElement } from "react"
 
-import Exporter from "../src/Exporter"
-import Generator from "../src/Generator"
+import Main from "../components/Main"
 
 interface State
 {
 
-    href: string
-
-    width: number
-    height: number
+    image: ImageData | null
+    data: string
 
 }
 
 export default class Home extends Component<object, State>
 {
 
+    private static readonly HEIGHT: number = 512
+
     public state: State =
     {
-        href: "#",
-        width: 1920,
-        height: 1080
+        image: null,
+        data: ""
     }
-
-    private readonly canvas = React.createRef<HTMLCanvasElement>()
-    private readonly image = React.createRef<HTMLImageElement>()
-
-    private generator!: Generator
 
 
     public constructor(props: object)
     {
         super(props)
-
-        this.export = this.export.bind(this)
-
-        this.updateWidth = this.updateWidth.bind(this)
-        this.updateHeight = this.updateHeight.bind(this)
+        this.select = this.select.bind(this)
     }
 
 
-    public componentDidMount(): void
+    private async select(e: ChangeEvent<HTMLInputElement>): Promise<void>
     {
-        const canvas = this.canvas.current!
-        const image = this.image.current!
+        const file = e.target.files![0]
+        const canvas = document.createElement("canvas")
 
-        canvas.width = image.width
-        canvas.height = image.height
+        const image = await this.resize(file, canvas)
+        const data = canvas.toDataURL()
 
-        this.generator = new Generator(canvas, image)
-        this.generator.run()
+        this.setState({ image, data })
     }
 
-    public componentWillUnmount(): void
+    private async resize(file: File, canvas: HTMLCanvasElement): Promise<ImageData>
     {
-        this.generator.stop()
+        const c = canvas.getContext("2d")!
+
+        // Get image
+        const source = await this.read(file)
+        const image = await this.image(source)
+
+        // Proportionally scale width to match fixed height
+        const width = Math.floor(canvas.width = image.width / image.height * Home.HEIGHT)
+        const height = canvas.height = Home.HEIGHT
+
+        // Draw image onto canvas to get resized data
+        c.drawImage(image, 0, 0, width, height)
+        return c.getImageData(0, 0, width, height)
     }
 
-
-    private export(): void
+    private async image(source: string): Promise<HTMLImageElement>
     {
-        const exporter = new Exporter(this.generator.image)
+        return new Promise(handler)
+        function handler(res: (result: HTMLImageElement) => void, rej: () => void): void
+        {
+            // Load data from file into Image object
+            const image = new Image()
+            image.src = source
 
-        // Point link to data URL; yeah, I don't get why downloading is done this way either
-        const href = exporter.export(this.state.width, this.state.height)
-        this.setState({ href })
+            image.onload = () => res(image)
+        }
     }
+
+    private async read(file: File): Promise<string>
+    {
+        return new Promise(handler)
+        function handler(res: (result: string) => void, rej: () => void): void
+        {
+            const reader = new FileReader()
+
+            // Resolve promise with file data
+            reader.onload = () => res(reader.result as string)
+            reader.onerror = rej
+
+            reader.readAsDataURL(file)
+        }
+    }
+
 
     public render(): ReactElement
     {
@@ -76,29 +95,15 @@ export default class Home extends Component<object, State>
                     <title>Triangle Image</title>
                 </Head>
 
-                <canvas ref={this.canvas} />
-                <img src="/forest.jpg" alt="" ref={this.image} />
-
-                <input type="number" value={this.state.width} onChange={this.updateWidth} />
-                <input type="number" value={this.state.height} onChange={this.updateHeight} />
-                <a
-                    href={this.state.href}
-                    download="result.png"
-                    onClick={this.export}
-                >
-                    Export
-                </a>
+                <input type="file" accept="image/*" onChange={this.select} />
+                {this.state.image &&
+                    <div>
+                        <img src={this.state.data} alt="" />
+                        <Main image={this.state.image} />
+                    </div>
+                }
             </div>
         )
-    }
-
-    private updateWidth(e: ChangeEvent<HTMLInputElement>): void
-    {
-        this.setState({ width: window.parseInt(e.target.value) })
-    }
-    private updateHeight(e: ChangeEvent<HTMLInputElement>): void
-    {
-        this.setState({ height: window.parseInt(e.target.value) })
     }
 
 }

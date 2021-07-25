@@ -18,7 +18,7 @@ export default class Generator
     private readonly comparer: Comparer
 
 
-    public constructor(canvas: HTMLCanvasElement, image: HTMLImageElement)
+    public constructor(canvas: HTMLCanvasElement, image: ImageData)
     {
         const width = canvas.width
         const height = canvas.height

@@ -34,7 +34,7 @@ export default class Comparer
     private readonly average: Compute
 
 
-    public constructor(private readonly gl: WebGL2RenderingContext, image: HTMLImageElement, input: Texture)
+    public constructor(private readonly gl: WebGL2RenderingContext, image: ImageData, input: Texture)
     {
         const width = image.width
         const height = image.height
@@ -68,7 +68,7 @@ export default class Comparer
         gl.uniform1i(this.average.uniformLocation("u_width"), width)
     }
 
-    private blur(image: HTMLImageElement): Texture
+    private blur(image: ImageData): Texture
     {
         const gl = this.gl
         
