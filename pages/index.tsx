@@ -1,11 +1,25 @@
 import Head from "next/head"
-import React, { Component, ReactElement } from "react"
+import React, { ChangeEvent, Component, ReactElement } from "react"
 
 import Exporter from "../src/Exporter"
 import Generator from "../src/Generator"
 
-export default class Home extends Component
+interface State
 {
+
+    width: number
+    height: number
+
+}
+
+export default class Home extends Component<object, State>
+{
+
+    public state: State =
+    {
+        width: 1920,
+        height: 1080
+    }
 
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private readonly image = React.createRef<HTMLImageElement>()
@@ -32,7 +46,7 @@ export default class Home extends Component
 
         // Point link to data URL; yeah, I don't get why downloading is done this way either
         const link = this.link.current!
-        link.href = exporter.export(1920, 1080)
+        link.href = exporter.export(this.state.width, this.state.height)
     }
 
 
@@ -46,6 +60,9 @@ export default class Home extends Component
 
                 <canvas ref={this.canvas} />
                 <img src="/forest.jpg" alt="" ref={this.image} />
+
+                <input type="number" value={this.state.width} onChange={this.updateWidth.bind(this)} />
+                <input type="number" value={this.state.height} onChange={this.updateHeight.bind(this)} />
                 <a
                     href="#"
                     download="result.png"
@@ -56,6 +73,15 @@ export default class Home extends Component
                 </a>
             </div>
         )
+    }
+
+    private updateWidth(e: ChangeEvent<HTMLInputElement>): void
+    {
+        this.setState({ width: window.parseInt(e.target.value) })
+    }
+    private updateHeight(e: ChangeEvent<HTMLInputElement>): void
+    {
+        this.setState({ height: window.parseInt(e.target.value) })
     }
 
 }
