@@ -45,7 +45,7 @@ export default class Main extends Component<Props, State>
     }
 
 
-    public componentDidMount(): void // TODO: Remount on update
+    public componentDidMount(): void
     {
         const canvas = this.canvas.current!
         const image = this.props.image

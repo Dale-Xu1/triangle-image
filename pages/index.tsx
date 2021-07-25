@@ -16,6 +16,7 @@ export default class Home extends Component<object, State>
 
     private static readonly HEIGHT: number = 512
 
+    private index: number = 0
     public state: State =
     {
         image: null,
@@ -38,6 +39,7 @@ export default class Home extends Component<object, State>
         const image = await this.resize(file, canvas)
         const data = canvas.toDataURL()
 
+        this.index++
         this.setState({ image, data })
     }
 
@@ -46,8 +48,8 @@ export default class Home extends Component<object, State>
         const c = canvas.getContext("2d")!
 
         // Get image
-        const source = await this.read(file)
-        const image = await this.image(source)
+        const data = await this.read(file)
+        const image = await this.image(data)
 
         // Proportionally scale width to match fixed height
         const width = Math.floor(canvas.width = image.width / image.height * Home.HEIGHT)
@@ -58,14 +60,14 @@ export default class Home extends Component<object, State>
         return c.getImageData(0, 0, width, height)
     }
 
-    private async image(source: string): Promise<HTMLImageElement>
+    private async image(data: string): Promise<HTMLImageElement>
     {
         return new Promise(handler)
         function handler(res: (result: HTMLImageElement) => void, rej: () => void): void
         {
             // Load data from file into Image object
             const image = new Image()
-            image.src = source
+            image.src = data
 
             image.onload = () => res(image)
         }
@@ -87,7 +89,7 @@ export default class Home extends Component<object, State>
     }
 
 
-    public render(): ReactElement
+    public render(): ReactElement // Yes, I realize using Next.js is overkill especially when I'm doing stuff like this
     {
         return (
             <div>
@@ -99,7 +101,7 @@ export default class Home extends Component<object, State>
                 {this.state.image &&
                     <div>
                         <img src={this.state.data} alt="" />
-                        <Main image={this.state.image} />
+                        <Main key={this.index} image={this.state.image} />
                     </div>
                 }
             </div>
