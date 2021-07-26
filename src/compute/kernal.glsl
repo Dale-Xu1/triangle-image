@@ -23,7 +23,7 @@ DATA getData(sampler2D data, ivec2 location)
     int i = location.x;
     int j = location.y;
 
-    return vec3[](
+    return DATA(
         getPixel(data, i - 1, j - 1),
         getPixel(data, i    , j - 1),
         getPixel(data, i + 1, j - 1),
