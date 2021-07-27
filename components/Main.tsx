@@ -23,12 +23,10 @@ interface State
 export default class Main extends Component<Props, State>
 {
 
-    public state: State =
-    {
-        href: "#",
-        width: 1920,
-        height: 1080
-    }
+    private static readonly RESOLUTION: number = 1920
+
+
+    public state: State
 
     private readonly canvas = React.createRef<HTMLCanvasElement>()
     private generator!: Generator
@@ -37,6 +35,29 @@ export default class Main extends Component<Props, State>
     public constructor(props: Props)
     {
         super(props)
+
+        // Precalculate result resolution based on original aspect ratio
+        let width: number
+        let height: number
+
+        const image = this.props.image
+        if (image.width > image.height)
+        {
+            width = Main.RESOLUTION
+            height = Math.floor(Main.RESOLUTION * image.height / image.width)
+        }
+        else
+        {
+            width = Math.floor(Main.RESOLUTION * image.width / image.height)
+            height = Main.RESOLUTION
+        }
+
+        this.state =
+        {
+            href: "#",
+            width,
+            height
+        }
 
         this.export = this.export.bind(this)
 

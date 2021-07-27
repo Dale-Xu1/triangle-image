@@ -4,9 +4,16 @@ import Random from "./Random"
 export default class Point extends Vector2
 {
 
+    private static readonly RANGE: number = 5
+    private static readonly DISTRIBUTION: number = 120
+
     public static random(width: number, height: number): Point
     {
         return new Point(Random.next(width), Random.next(height))
+    }
+    public static gaussian(): Point
+    {
+        return new Point(Random.gaussian() * Point.DISTRIBUTION, Random.gaussian() * Point.DISTRIBUTION)
     }
 
 
@@ -15,6 +22,11 @@ export default class Point extends Vector2
         super(x, y)
     }
 
+
+    public add(point: Point): Point
+    {
+        return new Point(this.x + point.x, this.y + point.y)
+    }
 
     public mutate(width: number, height: number): Point
     {
@@ -27,7 +39,7 @@ export default class Point extends Vector2
     private mutateValue(value: number, range: number): number
     {
         // Small chance the value is reset instead of perturbed
-        return Random.next() < Random.RESET ? Random.next(range) : value + Random.gaussian() * 5
+        return Random.next() < Random.RESET ? Random.next(range) : value + Random.gaussian() * Point.RANGE
     }
 
 }

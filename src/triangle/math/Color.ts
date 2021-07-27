@@ -5,6 +5,7 @@ export default class Color extends Color4
 {
 
     private static readonly EPSILON: number = 1e-13
+    private static readonly RANGE: number = 12
 
     public static random(): Color
     {
@@ -13,7 +14,7 @@ export default class Color extends Color4
 
 
     public constructor(public readonly r: number, public readonly g: number, public readonly b: number,
-        public readonly a: number = 255)
+        public readonly a: number)
     {
         super(r, g, b, a)
     }
@@ -35,7 +36,7 @@ export default class Color extends Color4
         if (Random.next() < Random.RESET) return Random.next(256)
         else
         {
-            let result = value + Random.gaussian() * 12
+            let result = value + Random.gaussian() * Color.RANGE
 
             // Constrain values to be between 0 and 255
             if (result < 0) result = 0

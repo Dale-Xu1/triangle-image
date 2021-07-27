@@ -4,13 +4,15 @@ import Point from "./math/Point"
 export default class Triangle
 {
 
-    private static readonly MIN_WIDTH = 4
+    private static readonly MIN_WIDTH: number = 4
 
     public static random(width: number, height: number): Triangle
     {
-        const a = Point.random(width, height)
-        const b = Point.random(width, height)
-        const c = Point.random(width, height)
+        const location = Point.random(width, height)
+
+        const a = location.add(Point.gaussian())
+        const b = location.add(Point.gaussian())
+        const c = location.add(Point.gaussian())
 
         // Discard triangle if result is too thin
         if (Triangle.thin(a, b, c)) return Triangle.random(width, height)
