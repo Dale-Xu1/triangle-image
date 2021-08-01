@@ -2,17 +2,19 @@
 
 ## Overview
 
-This program attempts to convert an image to be represented by a set of triangles as closely as possible. The algorithm isn't particularly fast, taking around 10 minutes for 100 triangles, nor is it that accurate. Most of the time, the result will look like a blurred version of the original image. However, if I do say so myself, the output usually makes a really nice wallpaper.
+This program attempts to approximate an image using a set of triangles as closely as possible. The algorithm isn't particularly fast, taking around 10 minutes for 100 triangles, nor is it very accurate. Most of the time, the result will look like a blurred version of the original image, though edge detection is taken into account in an attempt to compensate. Despite the many flaws, I do have to say the results make really nice wallpapers.
 
 ## Setup
 
-The algorithm was written in GLSL and TypeScript, so upon cloning, download the dependencies:
+The algorithm was written in GLSL (via WebGL) and TypeScript, so Node.js is required to run it.
+
+Upon cloning, install the dependencies:
 
 ```bash
 npm install
 ```
 
-To create and run a production build:
+Next, create and run a production build:
 
 ```bash
 npm run build
@@ -21,7 +23,7 @@ npm start
 
 The program will be running on http://localhost:3000.
 
-You'll see an option to choose a file, and it should start running immediately upon selection. Note that WebGL has questionable support across many devices or browsers, so it is very possible nothing will happen.
+On the webpage, you'll see an option to choose a file. The program should immediately start running upon selection. Note that support for WebGL on many devices and browsers is questionable, so it is very possible the algorithm won't run.
 
 ## Results
 
