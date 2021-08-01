@@ -26,10 +26,10 @@ You'll see an option to choose a file, and it should start running immediately u
 ## Results
 
 <p float="left">
-    <img src="assets/forest.png" width="900" />
-    <img src="assets/mona-lisa.png" width="400" />
+    <img src="assets/forest.png" width="581" />
+    <img src="assets/mona-lisa.png" width="219" />
 </p>
 <p float="left">
-    <img src="assets/starry-night.png" width="700" />
-    <img src="assets/winter.png" width="800" />
+    <img src="assets/starry-night.png" width="366" />
+    <img src="assets/winter.png" width="434" />
 </p>
