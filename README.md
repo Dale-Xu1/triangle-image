@@ -25,18 +25,11 @@ You'll see an option to choose a file, and it should start running immediately u
 
 ## Results
 
-<style>
-    div {
-        display: flex;
-        align-items: flex-start;
-    }
-</style>
-
-<div>
-    <img src="assets/forest.png" style="width: 72.6%" />
-    <img src="assets/mona-lisa.png" style="width: 27.4%" />
-</div>
-<div>
-    <img src="assets/starry-night.png" style="width: 45.7%" />
-    <img src="assets/winter.png" style="width: 54.3%" />
-</div>
+<p float="left">
+    <img src="assets/forest.png" width="900" />
+    <img src="assets/mona-lisa.png" width="400" />
+</p>
+<p float="left">
+    <img src="assets/starry-night.png" width="700" />
+    <img src="assets/winter.png" width="800" />
+</p>
